@@ -5,7 +5,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.sql.Date;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "Items")
@@ -21,7 +21,7 @@ public class Item {
     public User user;
 
     @NotNull
-    private Date dateTime;
+    private Timestamp dateTime;
 
     @NotNull
     private String title;
@@ -32,7 +32,7 @@ public class Item {
     public Item() { // Default constructor for JPA
     }
 
-    public Item(User user, Date dateTime, String title, String description) {
+    public Item(User user, Timestamp dateTime, String title, String description) {
         this.user = user;
         this.dateTime = dateTime;
         this.title = title;
@@ -51,9 +51,9 @@ public class Item {
         this.user = user;
     }
 
-    public Date getDateTime() { return dateTime; }
+    public Timestamp getDateTime() { return dateTime; }
 
-    public void setDateTime(Date dateTime) {
+    public void setDateTime(Timestamp dateTime) {
         this.dateTime = dateTime;
     }
 

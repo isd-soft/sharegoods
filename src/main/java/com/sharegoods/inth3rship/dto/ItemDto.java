@@ -2,7 +2,7 @@ package com.sharegoods.inth3rship.dto;
 
 import com.sharegoods.inth3rship.models.Item;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -13,7 +13,7 @@ public class ItemDto {
     Long userId;
     String title;
     String description;
-    Date dateTime;
+    Timestamp dateTime;
     String author;
 
     public ItemDto(Item item) {
@@ -68,11 +68,11 @@ public class ItemDto {
         this.description = description;
     }
 
-    public Date getDateTime() {
+    public Timestamp getDateTime() {
         return dateTime;
     }
 
-    public void setDateTime(Date dateTime) {
+    public void setDateTime(Timestamp dateTime) {
         this.dateTime = dateTime;
     }
 

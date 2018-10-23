@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.*;
 
 @Service
@@ -35,7 +36,7 @@ public class ItemService {
     public Item createNewItem(Long userId, String title, String description, List<MultipartFile> imageFiles) {
         User user = userService.getUserById(userId);
         java.util.Date dateNow = new java.util.Date();
-        Date date = new Date(dateNow.getTime());
+        Timestamp date = new Timestamp(dateNow.getTime());
         Item newItem = new Item(user, date, title, description);
         itemRepository.save(newItem);
         imageService.createImages(newItem, imageFiles);
