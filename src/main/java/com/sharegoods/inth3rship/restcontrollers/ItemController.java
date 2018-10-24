@@ -4,10 +4,15 @@ import com.sharegoods.inth3rship.dto.ImageDto;
 import com.sharegoods.inth3rship.dto.ItemDetailsDto;
 import com.sharegoods.inth3rship.dto.ItemDto;
 import com.sharegoods.inth3rship.dto.ItemThumbnailsDto;
+import com.sharegoods.inth3rship.exceptions.ItemNotFoundException;
+import com.sharegoods.inth3rship.exceptions.RatingException;
+import com.sharegoods.inth3rship.exceptions.UserNotFoundException;
+import com.sharegoods.inth3rship.exceptions.VoteTwiceException;
 import com.sharegoods.inth3rship.models.Image;
 import com.sharegoods.inth3rship.models.Item;
 import com.sharegoods.inth3rship.services.ImageService;
 import com.sharegoods.inth3rship.services.ItemService;
+import com.sharegoods.inth3rship.services.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +31,9 @@ public class ItemController {
 
     @Autowired
     private ImageService imageService;
+
+    @Autowired
+    private RatingService ratingService;
 
     @GetMapping("/users/{userId}/items")
     public ResponseEntity getItemsByUserId(@PathVariable("userId") Long userId) {
@@ -64,7 +72,7 @@ public class ItemController {
                                      @RequestParam("file") List<MultipartFile> imageFiles) {
         Item item = itemService.createNewItem(userId, title, description, imageFiles);
         ItemDto itemDto = new ItemDto(item);
-    return ResponseEntity.status(HttpStatus.OK).body(itemDto);
+        return ResponseEntity.status(HttpStatus.OK).body(itemDto);
     }
 
     @GetMapping("/items/{id}")
@@ -95,7 +103,7 @@ public class ItemController {
     public ResponseEntity updateItem(@PathVariable("itemId") Long itemId,
                                      @RequestParam("title") String title,
                                      @RequestParam("description") String description,
-                                     @RequestParam("file") List<MultipartFile> imageFiles){
+                                     @RequestParam("file") List<MultipartFile> imageFiles) {
         try {
             Item item = itemService.updateItem(itemId, title, description, imageFiles);
             ItemDto itemDto = new ItemDto(item);
@@ -104,4 +112,30 @@ public class ItemController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item not found");
         }
     }
+
+    /*
+    By posting Rating, every time we create (assign) a value to column "rating" in DB.
+     */
+    @PostMapping("/users/{userId}/items/{itemId}/rating")
+    public ResponseEntity updateRating(@PathVariable("userId") Long userId,
+                                       @PathVariable("itemId") Long itemId,
+                                       @RequestParam("rating") Double rating) {
+
+        try {
+            ratingService.createRating(userId, itemId, rating);
+            Item item = itemService.getItemById(itemId);
+            ItemDto itemDto = new ItemDto(item);
+            return ResponseEntity.status(HttpStatus.OK).body(itemDto);
+
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status((HttpStatus.NOT_FOUND)).body("User not found");
+        } catch (ItemNotFoundException e) {
+            return ResponseEntity.status((HttpStatus.NOT_FOUND)).body("Item not found");
+        } catch (RatingException e) {
+            return ResponseEntity.status((HttpStatus.NOT_FOUND)).body("Rating is not allowed: u’ve introduced number that is not in our boundaries. We allow only {1,2,3,4,5}");
+        } catch (VoteTwiceException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You’ve already voted, Snicky bastard");
+        }
+    }
+
 }

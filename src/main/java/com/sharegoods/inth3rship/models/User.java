@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @NotNull
     private String firstName;
@@ -21,7 +21,7 @@ public class User {
     @Email
     @NotNull
     @NotEmpty
-    @Column(unique=true)
+    @Column(unique = true)
     private String email;
 
     @NotNull
@@ -37,7 +37,7 @@ public class User {
         this.password = password; // should already be hashed
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -49,7 +49,9 @@ public class User {
         this.firstName = firstName;
     }
 
-    public String getLastName() { return lastName; }
+    public String getLastName() {
+        return lastName;
+    }
 
     public void setLastName(String lastName) {
         this.lastName = lastName;

@@ -1,5 +1,6 @@
 package com.sharegoods.inth3rship.models;
 
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -29,6 +30,9 @@ public class Item {
     @NotNull
     private String description;
 
+    @Formula("select avg(r.rating) from Rating r where r.item_id = id")
+    private Double rating;
+
     public Item() { // Default constructor for JPA
     }
 
@@ -39,33 +43,51 @@ public class Item {
         this.description = description;
     }
 
-    public Long getId() { return id; }
+    public Long getId() {
+        return id;
+    }
 
     public void setId(Long id) {
         this.id = id;
     }
 
-    public User getUser() { return user; }
+    public User getUser() {
+        return user;
+    }
 
     public void setUser(User user) {
         this.user = user;
     }
 
-    public Timestamp getDateTime() { return dateTime; }
+    public Timestamp getDateTime() {
+        return dateTime;
+    }
 
     public void setDateTime(Timestamp dateTime) {
         this.dateTime = dateTime;
     }
 
-    public String getTitle() { return title; }
+    public String getTitle() {
+        return title;
+    }
 
     public void setTitle(String title) {
         this.title = title;
     }
 
-    public String getDescription() { return description; }
+    public String getDescription() {
+        return description;
+    }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Double getRating() {
+        return rating;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
     }
 }

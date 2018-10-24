@@ -15,6 +15,7 @@ public class ItemDto {
     String description;
     Timestamp dateTime;
     String author;
+    Double rating;
 
     public ItemDto(Item item) {
         this.id = item.getId();
@@ -23,6 +24,7 @@ public class ItemDto {
         this.userId = item.getUser().getId();
         this.dateTime = item.getDateTime();
         this.author = item.getUser().getFirstName() + ' ' +  item.getUser().getLastName();
+        this.rating = item.getRating();
     }
 
         public static List<ItemDto> getItemDtoList(List<Item> itemList) {
@@ -84,4 +86,11 @@ public class ItemDto {
         this.author = author;
     }
 
+    public Double getRating() {
+        return rating;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
+    }
 }

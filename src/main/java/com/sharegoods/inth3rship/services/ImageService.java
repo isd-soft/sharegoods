@@ -67,8 +67,8 @@ public class ImageService {
     }
 
     public void updateItemImages(Item item, List<MultipartFile> imageFiles) {
-       deleteImagesByItem(item);
-       createImages(item, imageFiles);
+        deleteImagesByItem(item);
+        createImages(item, imageFiles);
     }
 
     public void createThumbnail(Image image) {
@@ -77,11 +77,11 @@ public class ImageService {
         try {
             BufferedImage img = ImageIO.read(in);
             BufferedImage thumbImage = Scalr.resize(img, Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC,
-                                            300, Scalr.OP_ANTIALIAS);
+                    300, Scalr.OP_ANTIALIAS);
             String type = image.getName().substring(image.getName().lastIndexOf(".") + 1);
             ImageIO.write(thumbImage, type, out);
-            byte [] thumbImageData = out.toByteArray();
-            imageRepository.save(new Image(image.getItem(), "thumb" + image.getName(), thumbImageData , true));
+            byte[] thumbImageData = out.toByteArray();
+            imageRepository.save(new Image(image.getItem(), "thumb" + image.getName(), thumbImageData, true));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

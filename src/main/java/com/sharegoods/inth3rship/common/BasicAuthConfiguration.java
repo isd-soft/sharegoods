@@ -46,13 +46,13 @@ public class BasicAuthConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                    .antMatchers(HttpMethod.OPTIONS,"/**").permitAll()
-                    .antMatchers("/users/login").permitAll()
-                    .antMatchers(HttpMethod.POST, "/users").permitAll()
-                    .antMatchers(HttpMethod.GET, "/items").permitAll()
-                    .antMatchers(HttpMethod.GET, "/items/**").permitAll()
-                    .anyRequest()
-                    .authenticated()
+                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .antMatchers("/users/login").permitAll()
+                .antMatchers(HttpMethod.POST, "/users").permitAll()
+                .antMatchers(HttpMethod.GET, "/items").permitAll()
+                .antMatchers(HttpMethod.GET, "/items/**").permitAll()
+                //     .anyRequest()
+                //     .authenticated()
                 .and()
                 .httpBasic();
     }
