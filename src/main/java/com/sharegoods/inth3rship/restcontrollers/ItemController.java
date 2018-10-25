@@ -3,7 +3,9 @@ package com.sharegoods.inth3rship.restcontrollers;
 import com.sharegoods.inth3rship.dto.ImageDto;
 import com.sharegoods.inth3rship.dto.ItemDetailsDto;
 import com.sharegoods.inth3rship.dto.ItemDto;
+import com.sharegoods.inth3rship.dto.CommentDto;
 import com.sharegoods.inth3rship.dto.ItemThumbnailsDto;
+import com.sharegoods.inth3rship.models.Comment;
 import com.sharegoods.inth3rship.exceptions.ItemNotFoundException;
 import com.sharegoods.inth3rship.exceptions.RatingException;
 import com.sharegoods.inth3rship.exceptions.UserNotFoundException;
@@ -12,6 +14,7 @@ import com.sharegoods.inth3rship.models.Image;
 import com.sharegoods.inth3rship.models.Item;
 import com.sharegoods.inth3rship.services.ImageService;
 import com.sharegoods.inth3rship.services.ItemService;
+import com.sharegoods.inth3rship.services.CommentService;
 import com.sharegoods.inth3rship.services.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,6 +34,9 @@ public class ItemController {
 
     @Autowired
     private ImageService imageService;
+
+    @Autowired
+    private CommentService commentService;
 
     @Autowired
     private RatingService ratingService;
@@ -65,8 +71,25 @@ public class ItemController {
         return ResponseEntity.status(HttpStatus.OK).body(itemThumbnailsDtoList);
     }
 
+    @PostMapping("/items/{id}/addComment")
+    public ResponseEntity addComment(Comment comment) {
+        Comment commentToSave = commentService.addComment(comment);
+        CommentDto commentDto = new CommentDto(commentToSave);
+        return ResponseEntity.status(HttpStatus.OK).body(commentDto);
+    }
+
+    @GetMapping("/items/{id}/comments/{id}")
+    public ResponseEntity deleteComment(@PathVariable("id") Long id) {
+        try {
+            commentService.deleteComment(id);
+            return ResponseEntity.status(HttpStatus.OK).body("Deleted successfully");
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Comment not found");
+        }
+    }
+
     @PostMapping("/users/{id}/items")
-    public ResponseEntity createItem(@PathVariable("id") Long userId,
+    public ResponseEntity createItem(@PathVariable("id ") Long userId,
                                      @RequestParam("title") String title,
                                      @RequestParam("description") String description,
                                      @RequestParam("file") List<MultipartFile> imageFiles) {
@@ -80,9 +103,11 @@ public class ItemController {
         try {
             Item item = itemService.getItemById(id);
             List<Image> itemImages = imageService.getImagesByItemId(id);
+            List<Comment> commentList = commentService.getComments(item);
             ItemDto itemDto = new ItemDto(item);
             List<ImageDto> imageDtoList = ImageDto.getImageDtoList(itemImages);
-            ItemDetailsDto itemDetailsDto = new ItemDetailsDto(itemDto, imageDtoList);
+            List<CommentDto> commentDtoList = CommentDto.getCommentDtoList(commentList);
+            ItemDetailsDto itemDetailsDto = new ItemDetailsDto(itemDto, imageDtoList, commentDtoList);
             return ResponseEntity.status(HttpStatus.OK).body(itemDetailsDto);
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item not found");
