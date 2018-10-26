@@ -41,6 +41,8 @@ public class ItemController {
     @Autowired
     private RatingService ratingService;
 
+    /***** items ****/
+
     @GetMapping("/users/{userId}/items")
     public ResponseEntity getItemsByUserId(@PathVariable("userId") Long userId) {
         try {
@@ -59,37 +61,18 @@ public class ItemController {
     }
 
     @GetMapping("/items")
-    public ResponseEntity getItems() {
-        List<Item> itemList = itemService.getItems();
-
+    public ResponseEntity getItems(@RequestParam("value") String value, @RequestParam("direction") String direction) {
+        List<Item> itemList = itemService.getItems(value, direction);
         if (itemList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body("No items found");
         }
         Map<Item, Image> itemHashMap = itemService.getItemsWithThumbnails(itemList);
-
         List<ItemThumbnailsDto> itemThumbnailsDtoList = ItemThumbnailsDto.getItemThumbnailsDtoList(itemHashMap);
         return ResponseEntity.status(HttpStatus.OK).body(itemThumbnailsDtoList);
     }
 
-    @PostMapping("/items/{id}/addComment")
-    public ResponseEntity addComment(Comment comment) {
-        Comment commentToSave = commentService.addComment(comment);
-        CommentDto commentDto = new CommentDto(commentToSave);
-        return ResponseEntity.status(HttpStatus.OK).body(commentDto);
-    }
-
-    @GetMapping("/items/{id}/comments/{id}")
-    public ResponseEntity deleteComment(@PathVariable("id") Long id) {
-        try {
-            commentService.deleteComment(id);
-            return ResponseEntity.status(HttpStatus.OK).body("Deleted successfully");
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Comment not found");
-        }
-    }
-
     @PostMapping("/users/{id}/items")
-    public ResponseEntity createItem(@PathVariable("id ") Long userId,
+    public ResponseEntity createItem(@PathVariable("id") Long userId,
                                      @RequestParam("title") String title,
                                      @RequestParam("description") String description,
                                      @RequestParam("file") List<MultipartFile> imageFiles) {
@@ -138,14 +121,32 @@ public class ItemController {
         }
     }
 
-    /*
-    By posting Rating, every time we create (assign) a value to column "rating" in DB.
-     */
+    /***** comments ****/
+
+    @PostMapping("/items/{id}/addComment")
+    public ResponseEntity addComment(Comment comment) {
+        Comment commentToSave = commentService.addComment(comment);
+        CommentDto commentDto = new CommentDto(commentToSave);
+        return ResponseEntity.status(HttpStatus.OK).body(commentDto);
+    }
+
+    @GetMapping("/items/{itemId}/comments/{id}")
+    public ResponseEntity deleteComment(@PathVariable("id") Long id) {
+        try {
+            commentService.deleteComment(id);
+            return ResponseEntity.status(HttpStatus.OK).body("Deleted successfully");
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Comment not found");
+        }
+    }
+
+    /***** rating ****/
+
+    // By posting Rating, every time we create (assign) a value to column "rating" in DB.
     @PostMapping("/users/{userId}/items/{itemId}/rating")
     public ResponseEntity updateRating(@PathVariable("userId") Long userId,
                                        @PathVariable("itemId") Long itemId,
                                        @RequestParam("rating") Double rating) {
-
         try {
             ratingService.createRating(userId, itemId, rating);
             Item item = itemService.getItemById(itemId);
@@ -162,5 +163,4 @@ public class ItemController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You’ve already voted, Snicky bastard");
         }
     }
-
 }

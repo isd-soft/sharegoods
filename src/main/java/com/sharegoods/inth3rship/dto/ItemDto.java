@@ -27,7 +27,7 @@ public class ItemDto {
         this.rating = item.getRating();
     }
 
-        public static List<ItemDto> getItemDtoList(List<Item> itemList) {
+    public static List<ItemDto> getItemDtoList(List<Item> itemList) {
         List<ItemDto> itemDtoList = new ArrayList<>();
         ListIterator<Item> itemsIterator = itemList.listIterator();
         while (itemsIterator.hasNext()) {

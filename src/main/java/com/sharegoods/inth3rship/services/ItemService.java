@@ -5,10 +5,10 @@ import com.sharegoods.inth3rship.models.Item;
 import com.sharegoods.inth3rship.models.User;
 import com.sharegoods.inth3rship.repositories.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -29,8 +29,18 @@ public class ItemService {
         return itemRepository.findByUser(user);
     }
 
-    public List<Item> getItems() {
-        return itemRepository.findAll();
+    public List<Item> getItems(String value, String direction) {
+        Sort.Direction sortDirection = Sort.Direction.ASC;
+        if (direction.equals("Desc")) {
+            sortDirection = Sort.Direction.DESC;
+        }
+        if (value.equals("Title")) {
+            Sort sortByTitleIgnoreCase = Sort.by(new Sort.Order(sortDirection, value).ignoreCase());
+            return itemRepository.findAll(sortByTitleIgnoreCase);
+        } else {
+            Sort sortByValue = Sort.by(new Sort.Order(sortDirection, value));
+            return itemRepository.findAll(sortByValue);
+        }
     }
 
     public Item createNewItem(Long userId, String title, String description, List<MultipartFile> imageFiles) {
@@ -61,7 +71,7 @@ public class ItemService {
     }
 
     public Map<Item, Image> getItemsWithThumbnails(List<Item> items) {
-        Map<Item, Image> itemsWithThumbnails = new HashMap<>();
+        Map<Item, Image> itemsWithThumbnails = new LinkedHashMap<>();
         ListIterator<Item> itemsIterator = items.listIterator();
         while (itemsIterator.hasNext()) {
             Item currentItem = itemsIterator.next();

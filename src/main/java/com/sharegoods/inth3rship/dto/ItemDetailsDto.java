@@ -1,5 +1,7 @@
 package com.sharegoods.inth3rship.dto;
 
+import com.sharegoods.inth3rship.models.Rating;
+
 import java.util.List;
 
 public class ItemDetailsDto {

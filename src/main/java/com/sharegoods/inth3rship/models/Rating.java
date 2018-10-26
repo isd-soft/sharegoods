@@ -1,12 +1,14 @@
 package com.sharegoods.inth3rship.models;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "Rating")
 public class Rating {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,6 +24,7 @@ public class Rating {
     @ManyToOne
     @JoinColumn(name = "item_id")
     @NotNull
+    @OnDelete(action = OnDeleteAction.CASCADE)
     public Item item;
 
     public Rating() {

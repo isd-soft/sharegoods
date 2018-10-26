@@ -31,15 +31,12 @@ public class RatingService {
         return ratingRepository.findByItem(item);
     }
 
-
     public Boolean validationRating(Long userId, Long itemId) {
         User user = userService.getUserById(userId);
         Item item = itemService.getItemById(itemId);
         List<Rating> arrayList = ratingRepository.findByUserIdAndItemId(user.getId(), item.getId());
         return arrayList.isEmpty();
-
     }
-
 
     public Rating createRating(Long userId, Long itemId, Double rating) throws UserNotFoundException, ItemNotFoundException, RatingException, VoteTwiceException {
 
@@ -47,8 +44,7 @@ public class RatingService {
             throw new VoteTwiceException("You try to vote second time, Snicky bastard");
         }
 
-        if (rating < 6 && rating > 0) {
-
+        if (rating <= 5 && rating > 0) {
             User user;
             Item item;
 

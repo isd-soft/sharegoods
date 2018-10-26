@@ -20,7 +20,6 @@ public class Comment {
     @OnDelete(action = OnDeleteAction.CASCADE)
     public Item item;
 
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     @NotNull
@@ -31,7 +30,6 @@ public class Comment {
 
     @NotNull
     private String comment;
-
 
     public Comment() { // Default constructor for JPA
     }
