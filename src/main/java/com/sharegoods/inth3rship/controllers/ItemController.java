@@ -1,4 +1,4 @@
-package com.sharegoods.inth3rship.restcontrollers;
+package com.sharegoods.inth3rship.controllers;
 
 import com.sharegoods.inth3rship.dto.ImageDto;
 import com.sharegoods.inth3rship.dto.ItemDetailsDto;
@@ -12,6 +12,7 @@ import com.sharegoods.inth3rship.exceptions.UserNotFoundException;
 import com.sharegoods.inth3rship.exceptions.VoteTwiceException;
 import com.sharegoods.inth3rship.models.Image;
 import com.sharegoods.inth3rship.models.Item;
+import com.sharegoods.inth3rship.services.ChatService;
 import com.sharegoods.inth3rship.services.ImageService;
 import com.sharegoods.inth3rship.services.ItemService;
 import com.sharegoods.inth3rship.services.CommentService;
@@ -41,7 +42,8 @@ public class ItemController {
     @Autowired
     private RatingService ratingService;
 
-    /***** items ****/
+    @Autowired
+    private ChatService chatService;
 
     @GetMapping("/users/{userId}/items")
     public ResponseEntity getItemsByUserId(@PathVariable("userId") Long userId) {
@@ -88,7 +90,8 @@ public class ItemController {
             List<Image> itemImages = imageService.getImagesByItemId(id);
             ItemDto itemDto = new ItemDto(item);
             List<ImageDto> imageDtoList = ImageDto.getImageDtoList(itemImages);
-            ItemDetailsDto itemDetailsDto = new ItemDetailsDto(itemDto, imageDtoList);
+            boolean isAuthorOnline = chatService.isAuthorOnline(item.getUser().getId());
+            ItemDetailsDto itemDetailsDto = new ItemDetailsDto(itemDto, imageDtoList, isAuthorOnline);
             return ResponseEntity.status(HttpStatus.OK).body(itemDetailsDto);
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item not found");

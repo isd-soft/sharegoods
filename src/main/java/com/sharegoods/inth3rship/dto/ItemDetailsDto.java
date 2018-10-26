@@ -7,10 +7,12 @@ import java.util.List;
 public class ItemDetailsDto {
     private ItemDto itemDto;
     private List<ImageDto> imageDtoList;
+    private Boolean userIsOnline;
 
-    public ItemDetailsDto(ItemDto itemDto, List<ImageDto> imageDtoList) {
+    public ItemDetailsDto(ItemDto itemDto, List<ImageDto> imageDtoList, boolean userIsOnline) {
         this.itemDto = itemDto;
         this.imageDtoList = imageDtoList;
+        this.userIsOnline = userIsOnline;
     }
 
     public ItemDto getItemDto() { return itemDto; }
@@ -26,4 +28,8 @@ public class ItemDetailsDto {
     public void setImageDtoList(List<ImageDto> imageDtoList) {
         this.imageDtoList = imageDtoList;
     }
+
+    public boolean getUserIsOnline() { return userIsOnline;}
+
+    public void setUserIsOnline(boolean userIsOnline) { this.userIsOnline = userIsOnline; }
 }

@@ -13,8 +13,8 @@ public class ItemDto {
     Long userId;
     String title;
     String description;
+    String userName;
     Timestamp dateTime;
-    String author;
     Double rating;
 
     public ItemDto(Item item) {
@@ -23,7 +23,7 @@ public class ItemDto {
         this.description = item.getDescription();
         this.userId = item.getUser().getId();
         this.dateTime = item.getDateTime();
-        this.author = item.getUser().getFirstName() + ' ' +  item.getUser().getLastName();
+        this.userName = item.getUser().getFirstName() + ' ' +  item.getUser().getLastName();
         this.rating = item.getRating();
     }
 
@@ -36,7 +36,6 @@ public class ItemDto {
         }
         return itemDtoList;
     }
-
 
     public Long getId() {
         return id;
@@ -78,12 +77,12 @@ public class ItemDto {
         this.dateTime = dateTime;
     }
 
-    public String getAuthor() {
-        return author;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public Double getRating() {

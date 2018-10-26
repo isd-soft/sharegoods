@@ -1,6 +1,9 @@
-package com.sharegoods.inth3rship.restcontrollers;
+package com.sharegoods.inth3rship.controllers;
 
 import com.sharegoods.inth3rship.dto.UserDto;
+import com.sharegoods.inth3rship.models.Item;
+import com.sharegoods.inth3rship.services.ChatService;
+import com.sharegoods.inth3rship.services.ItemService;
 import com.sharegoods.inth3rship.services.UserService;
 import com.sharegoods.inth3rship.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +20,12 @@ import java.util.NoSuchElementException;
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ItemService itemService;
+
+    @Autowired
+    private ChatService chatService;
 
     @GetMapping("/users")
     public ResponseEntity getAllUsers() {
@@ -79,6 +88,19 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.OK).body("User was deleted successfully !");
         } catch (EmptyResultDataAccessException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+    }
+
+    @GetMapping("/users/{userId}/accessItem/{authorId}")
+    public ResponseEntity addChatRoom(@PathVariable("userId") Long userId, @PathVariable("authorId") Long authorId) {
+        try {
+            User author = userService.getUserById(authorId);
+            Long itemAuthorId = author.getId();
+            chatService.addChatRoom(userId, itemAuthorId);
+            return ResponseEntity.status(HttpStatus.OK).body("Chat room was created");
+        }
+        catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Current user or author not found");
         }
     }
 }
