@@ -36,4 +36,10 @@ INSERT INTO Rating (RATING, ITEM_ID, USER_ID) VALUES
 
 
 
+INSERT INTO Comments (COMMENT, DATE_TIME, ITEM_ID, USER_ID) VALUES
+ ('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore',
+   '2018-10-16 22:30:00', 1, 1),
+ ('this is my comment', '2018-10-20 10:30:00', 1, 2),
+ ('this is my comment2', '2018-10-20 10:30:00', 2, 1),;
+
 

@@ -63,4 +63,8 @@ public class CommentDto {
     public void setComment(String comment) {
         this.comment = comment;
     }
+
+    public String getUserName() {return userName; }
+
+    public void setUserName(String userName) { this.userName = userName; }
 }

@@ -86,11 +86,9 @@ public class ItemController {
         try {
             Item item = itemService.getItemById(id);
             List<Image> itemImages = imageService.getImagesByItemId(id);
-            List<Comment> commentList = commentService.getComments(item);
             ItemDto itemDto = new ItemDto(item);
             List<ImageDto> imageDtoList = ImageDto.getImageDtoList(itemImages);
-            List<CommentDto> commentDtoList = CommentDto.getCommentDtoList(commentList);
-            ItemDetailsDto itemDetailsDto = new ItemDetailsDto(itemDto, imageDtoList, commentDtoList);
+            ItemDetailsDto itemDetailsDto = new ItemDetailsDto(itemDto, imageDtoList);
             return ResponseEntity.status(HttpStatus.OK).body(itemDetailsDto);
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item not found");
@@ -123,9 +121,23 @@ public class ItemController {
 
     /***** comments ****/
 
-    @PostMapping("/items/{id}/addComment")
-    public ResponseEntity addComment(Comment comment) {
-        Comment commentToSave = commentService.addComment(comment);
+    @GetMapping("/items/{id}/comments")
+    public ResponseEntity getComments(@PathVariable("id") Long id) {
+        try {
+            Item item = itemService.getItemById(id);
+            List<Comment> comments = commentService.getComments(item);
+            List<CommentDto> commentDtoList = CommentDto.getCommentDtoList(comments);
+            return ResponseEntity.status(HttpStatus.OK).body(commentDtoList);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item not found");
+        }
+    }
+
+    @PostMapping("/items/{itemId}/addComment")
+    public ResponseEntity addComment(@PathVariable("itemId") Long itemId,
+                                     @RequestParam("userId") Long userId,
+                                     @RequestParam("comment") String comment) {
+        Comment commentToSave = commentService.addComment(itemId, userId, comment);
         CommentDto commentDto = new CommentDto(commentToSave);
         return ResponseEntity.status(HttpStatus.OK).body(commentDto);
     }
