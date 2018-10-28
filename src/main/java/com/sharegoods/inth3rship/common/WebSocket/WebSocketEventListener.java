@@ -47,6 +47,5 @@ public class WebSocketEventListener {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
         String sessionId = headerAccessor.getSessionId();
         chatService.removeOnlineUser(sessionId);
-        }
     }
 }
