@@ -1,6 +1,5 @@
 package com.sharegoods.inth3rship.common.WebSocket;
 
-import com.sharegoods.inth3rship.models.ChatMessage;
 import com.sharegoods.inth3rship.services.ChatService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,9 +10,6 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
-
-import static java.lang.String.format;
-
 
 @Component
 public class WebSocketEventListener {

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 public class ImageDto {
+
     private String name;
     private String imageBase64;
 

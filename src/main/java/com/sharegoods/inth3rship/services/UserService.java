@@ -26,8 +26,8 @@ public class UserService implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
-    // The loadUserByUsername method is required by the UserDetailsService interface, which is used for Spring Security
-    // However we identify user by email, hence the implementation is for email
+    /* The loadUserByUsername method is required by the UserDetailsService interface, which is used for Spring Security
+       However we identify user by email, hence the implementation is for email */
     @Override
     public UserDetails loadUserByUsername(String email) {
         User user = findUserByEmail(email);
@@ -43,6 +43,10 @@ public class UserService implements UserDetailsService {
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    public List<String> getAllEmails() {
+        return userRepository.getEmails();
     }
 
     public User getUserById(Long id) {

@@ -10,6 +10,5 @@ import java.util.List;
 @Repository
 public interface ImageRepository extends JpaRepository<Image, Long> {
     List<Image> findByItemAndThumbnail(Item item, boolean thumbnail);
-
     void deleteByItem(Item item);
 }

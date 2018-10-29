@@ -24,23 +24,50 @@ public class ItemService {
     @Autowired
     private ImageService imageService;
 
+    @Autowired
+    private MailService mailService;
+
     public List<Item> getItemsByUserId(Long id) {
         User user = userService.getUserById(id);
         return itemRepository.findByUser(user);
     }
 
     public List<Item> getItems(String value, String direction) {
+        Sort sortByValue = getSorting(value, direction);
+        return itemRepository.findAll(sortByValue);
+    }
+
+    public List<Item> getItemsByTitle(String title, String value, String direction) {
+        Sort sortByValue = getSorting(value, direction);
+        return itemRepository.findAllByTitleContaining(title, sortByValue);
+    }
+
+    public Sort getSorting(String value, String direction) {
         Sort.Direction sortDirection = Sort.Direction.ASC;
         if (direction.equals("Desc")) {
             sortDirection = Sort.Direction.DESC;
         }
         if (value.equals("Title")) {
-            Sort sortByTitleIgnoreCase = Sort.by(new Sort.Order(sortDirection, value).ignoreCase());
-            return itemRepository.findAll(sortByTitleIgnoreCase);
+            return Sort.by(new Sort.Order(sortDirection, value).ignoreCase());
         } else {
-            Sort sortByValue = Sort.by(new Sort.Order(sortDirection, value));
-            return itemRepository.findAll(sortByValue);
+            return Sort.by(new Sort.Order(sortDirection, value));
         }
+    }
+
+    public Item getItemById(Long id) {
+        Optional<Item> optionalItem = itemRepository.findById(id);
+        return optionalItem.get();
+    }
+
+    public Map<Item, Image> getItemsWithThumbnails(List<Item> items) {
+        Map<Item, Image> itemsWithThumbnails = new LinkedHashMap<>();
+        ListIterator<Item> itemsIterator = items.listIterator();
+        while (itemsIterator.hasNext()) {
+            Item currentItem = itemsIterator.next();
+            Image thumbnail = imageService.getThumbnail(currentItem);
+            itemsWithThumbnails.put(currentItem, thumbnail);
+        }
+        return itemsWithThumbnails;
     }
 
     public Item createNewItem(Long userId, String title, String description, List<MultipartFile> imageFiles) {
@@ -50,12 +77,11 @@ public class ItemService {
         Item newItem = new Item(user, date, title, description);
         itemRepository.save(newItem);
         imageService.createImages(newItem, imageFiles);
-        return newItem;
-    }
 
-    public Item getItemById(Long id) {
-        Optional<Item> optionalItem = itemRepository.findById(id);
-        return optionalItem.get();
+        List<String> emails = userService.getAllEmails();
+        emails.remove(user.getEmail());
+        mailService.sendEmail(emails, newItem);
+        return newItem;
     }
 
     public void deleteItem(Long id) {
@@ -70,14 +96,4 @@ public class ItemService {
         return itemRepository.save(item);
     }
 
-    public Map<Item, Image> getItemsWithThumbnails(List<Item> items) {
-        Map<Item, Image> itemsWithThumbnails = new LinkedHashMap<>();
-        ListIterator<Item> itemsIterator = items.listIterator();
-        while (itemsIterator.hasNext()) {
-            Item currentItem = itemsIterator.next();
-            Image thumbnail = imageService.getThumbnail(currentItem);
-            itemsWithThumbnails.put(currentItem, thumbnail);
-        }
-        return itemsWithThumbnails;
-    }
 }

@@ -2,11 +2,11 @@ package com.sharegoods.inth3rship.dto;
 
 import com.sharegoods.inth3rship.models.Image;
 import com.sharegoods.inth3rship.models.Item;
-import com.sharegoods.inth3rship.models.Rating;
 
 import java.util.*;
 
 public class ItemThumbnailsDto {
+
     private Long itemId;
     private String title;
     private ImageDto thumbnailDto;

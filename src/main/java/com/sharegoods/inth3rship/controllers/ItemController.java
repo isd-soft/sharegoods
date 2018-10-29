@@ -73,16 +73,6 @@ public class ItemController {
         return ResponseEntity.status(HttpStatus.OK).body(itemThumbnailsDtoList);
     }
 
-    @PostMapping("/users/{id}/items")
-    public ResponseEntity createItem(@PathVariable("id") Long userId,
-                                     @RequestParam("title") String title,
-                                     @RequestParam("description") String description,
-                                     @RequestParam("file") List<MultipartFile> imageFiles) {
-        Item item = itemService.createNewItem(userId, title, description, imageFiles);
-        ItemDto itemDto = new ItemDto(item);
-        return ResponseEntity.status(HttpStatus.OK).body(itemDto);
-    }
-
     @GetMapping("/items/{id}")
     public ResponseEntity getItemById(@PathVariable("id") Long id) {
         try {
@@ -96,6 +86,28 @@ public class ItemController {
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item not found");
         }
+    }
+
+    @GetMapping("/items/search")
+    public ResponseEntity getItemsByTitle(@RequestParam("title") String title,
+                                          @RequestParam("value") String value, @RequestParam("direction") String direction) {
+        List<Item> itemList = itemService.getItemsByTitle(title, value, direction);
+        if (itemList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body("No items found containing '" + title + "'");
+        }
+        Map<Item, Image> itemHashMap = itemService.getItemsWithThumbnails(itemList);
+        List<ItemThumbnailsDto> itemThumbnailsDtoList = ItemThumbnailsDto.getItemThumbnailsDtoList(itemHashMap);
+        return ResponseEntity.status(HttpStatus.OK).body(itemThumbnailsDtoList);
+    }
+
+    @PostMapping("/users/{id}/items")
+    public ResponseEntity createItem(@PathVariable("id") Long userId,
+                                     @RequestParam("title") String title,
+                                     @RequestParam("description") String description,
+                                     @RequestParam("file") List<MultipartFile> imageFiles) {
+        Item item = itemService.createNewItem(userId, title, description, imageFiles);
+        ItemDto itemDto = new ItemDto(item);
+        return ResponseEntity.status(HttpStatus.OK).body(itemDto);
     }
 
     @DeleteMapping("/items/{id}")
@@ -145,11 +157,11 @@ public class ItemController {
         return ResponseEntity.status(HttpStatus.OK).body(commentDto);
     }
 
-    @GetMapping("/items/{itemId}/comments/{id}")
+    @DeleteMapping("/items/{itemId}/comments/{id}")
     public ResponseEntity deleteComment(@PathVariable("id") Long id) {
         try {
             commentService.deleteComment(id);
-            return ResponseEntity.status(HttpStatus.OK).body("Deleted successfully");
+            return ResponseEntity.status(HttpStatus.OK).body("Comment deleted successfully");
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Comment not found");
         }

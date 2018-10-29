@@ -33,7 +33,6 @@ public class ChatController {
         messagingTemplate.convertAndSend(format("/channel/%s", roomId), chatMessage);
     }
 
-
     @MessageMapping("/chat/{roomId}/join")
     public void join(@DestinationVariable String roomId, @Payload ChatMessage chatMessage,
                         SimpMessageHeaderAccessor headerAccessor) {

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 public class CommentDto {
+
     Long id;
     Long itemId;
     Timestamp dateTime;

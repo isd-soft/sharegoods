@@ -4,7 +4,6 @@ import com.sharegoods.inth3rship.controllers.ChatController;
 import com.sharegoods.inth3rship.models.ChatRoom;
 import com.sharegoods.inth3rship.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.annotation.AccessType;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -50,7 +49,6 @@ public class ChatService {
     }
 
     public void removeAllRooms(Long userId) {
-
         int index = 0;
         Long informUserId = 0L;
 

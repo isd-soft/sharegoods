@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-
 public class UserDto {
 
     private long id;
@@ -15,7 +14,6 @@ public class UserDto {
     private String email;
     private String role;
 
-
     public UserDto(User user) {
         this.id = user.getId();
         this.firstName = user.getFirstName();
@@ -23,7 +21,6 @@ public class UserDto {
         this.email = user.getEmail();
         this.role = user.getRole();
     }
-
 
     public static List<UserDto> getUserDtoList(List<User> userList) {
 
@@ -36,7 +33,6 @@ public class UserDto {
         }
         return userDtoList;
     }
-
 
     public long getId() {
         return id;
