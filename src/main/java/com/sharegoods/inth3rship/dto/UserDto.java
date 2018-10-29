@@ -13,6 +13,7 @@ public class UserDto {
     private String firstName;
     private String lastName;
     private String email;
+    private String role;
 
 
     public UserDto(User user) {
@@ -20,6 +21,7 @@ public class UserDto {
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.email = user.getEmail();
+        this.role = user.getRole();
     }
 
 
@@ -66,5 +68,15 @@ public class UserDto {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getRole()
+    {
+        return role;
+    }
+
+    public void setRole(String role)
+    {
+        this.role = role;
     }
 }

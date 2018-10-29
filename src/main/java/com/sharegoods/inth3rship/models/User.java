@@ -27,6 +27,9 @@ public class User {
     @NotNull
     private String password;
 
+    @NotNull
+    private String role;
+
     public User() {  // Default constructor for JPA
     }
 
@@ -71,5 +74,15 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRole()
+    {
+        return role;
+    }
+
+    public void setRole(String role)
+    {
+        this.role = role;
     }
 }

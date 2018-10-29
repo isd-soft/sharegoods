@@ -49,11 +49,11 @@ public class BasicAuthConfiguration extends WebSecurityConfigurerAdapter {
                     .antMatchers(HttpMethod.OPTIONS,"/**").permitAll()
                     .antMatchers("/users/login").permitAll()
                     .antMatchers(HttpMethod.POST, "/users").permitAll()
+                    .antMatchers(HttpMethod.GET, "/users").hasAuthority("ADMIN")
                     .antMatchers(HttpMethod.GET, "/users/**").permitAll()
                     .antMatchers(HttpMethod.GET, "/items").permitAll()
                     .antMatchers(HttpMethod.GET, "/items/**").permitAll()
-
-                .anyRequest()
+                    .anyRequest()
                     .authenticated()
                 .and()
                 .httpBasic();
