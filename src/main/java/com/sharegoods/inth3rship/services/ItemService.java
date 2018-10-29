@@ -80,7 +80,11 @@ public class ItemService {
 
         List<String> emails = userService.getAllEmails();
         emails.remove(user.getEmail());
-        mailService.sendEmail(emails, newItem);
+        new Thread( () -> {
+                mailService.sendEmail(emails, newItem);
+            }
+        ).start();
+
         return newItem;
     }
 
