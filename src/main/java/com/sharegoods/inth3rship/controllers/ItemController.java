@@ -157,11 +157,22 @@ public class ItemController {
         return ResponseEntity.status(HttpStatus.OK).body(commentDto);
     }
 
-    @DeleteMapping("/items/{itemId}/comments/{id}")
+    @DeleteMapping("comments/{id}")
     public ResponseEntity deleteComment(@PathVariable("id") Long id) {
         try {
             commentService.deleteComment(id);
             return ResponseEntity.status(HttpStatus.OK).body("Comment deleted successfully");
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Comment not found");
+        }
+    }
+
+    @PutMapping("comments/{id}")
+    public ResponseEntity updateComment(@PathVariable("id") Long id,  @RequestParam("comment") String comment) {
+        try {
+            Comment updatedComment = commentService.updateComment(id, comment);
+            CommentDto commentDto = new CommentDto(updatedComment);
+            return ResponseEntity.status(HttpStatus.OK).body(commentDto);
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Comment not found");
         }
