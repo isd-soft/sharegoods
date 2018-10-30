@@ -39,7 +39,7 @@ public class ItemService {
 
     public List<Item> getItemsByTitle(String title, String value, String direction) {
         Sort sortByValue = getSorting(value, direction);
-        return itemRepository.findAllByTitleContaining(title, sortByValue);
+        return itemRepository.findAllByTitleContainingIgnoreCase(title, sortByValue);
     }
 
     public Sort getSorting(String value, String direction) {
@@ -78,8 +78,7 @@ public class ItemService {
         itemRepository.save(newItem);
         imageService.createImages(newItem, imageFiles);
 
-        List<String> emails = userService.getAllEmails();
-        emails.remove(user.getEmail());
+        List<String> emails = userService.getAllEmails(user.getEmail());
         new Thread( () -> {
                 mailService.sendEmail(emails, newItem);
             }

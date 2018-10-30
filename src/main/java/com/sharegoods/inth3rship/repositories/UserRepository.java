@@ -11,7 +11,7 @@ import java.util.List;
 public interface UserRepository extends JpaRepository<User, Long> {
     User findByEmail(String email);
 
-    @Query(value="SELECT email FROM users", nativeQuery = true)
-    List<String> getEmails();
+    @Query(value="SELECT email FROM Users u WHERE u.email <> ?1", nativeQuery = true)
+    List<String> getEmails(String authorEmail);
 }
 
