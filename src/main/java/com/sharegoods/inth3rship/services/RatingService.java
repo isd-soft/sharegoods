@@ -26,8 +26,7 @@ public class RatingService {
     @Autowired
     private UserService userService;
 
-    public List<Rating> getRatingByItemId(Long itemId) {
-        Item item = itemService.getItemById(itemId);
+    public List<Rating> getRating(Item item) {
         return ratingRepository.findByItem(item);
     }
 
@@ -36,6 +35,8 @@ public class RatingService {
         Item item = itemService.getItemById(itemId);
         List<Rating> arrayList = ratingRepository.findByUserIdAndItemId(user.getId(), item.getId());
         return arrayList.isEmpty();
+
+
     }
 
     public Rating createRating(Long userId, Long itemId, Double rating) throws UserNotFoundException, ItemNotFoundException, RatingException, VoteTwiceException {
@@ -60,6 +61,7 @@ public class RatingService {
             }
             Rating rate = new Rating(rating, user, item);
             return ratingRepository.save(rate);
+
         } else {
             throw new RatingException("Rating is higher than u think");
         }
