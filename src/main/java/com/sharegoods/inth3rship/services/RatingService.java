@@ -35,8 +35,6 @@ public class RatingService {
         Item item = itemService.getItemById(itemId);
         List<Rating> arrayList = ratingRepository.findByUserIdAndItemId(user.getId(), item.getId());
         return arrayList.isEmpty();
-
-
     }
 
     public Rating createRating(Long userId, Long itemId, Double rating) throws UserNotFoundException, ItemNotFoundException, RatingException, VoteTwiceException {
