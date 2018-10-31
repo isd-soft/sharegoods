@@ -1,22 +1,14 @@
 package com.sharegoods.inth3rship.controllers;
 
-import com.sharegoods.inth3rship.dto.ImageDto;
-import com.sharegoods.inth3rship.dto.ItemDetailsDto;
-import com.sharegoods.inth3rship.dto.ItemDto;
-import com.sharegoods.inth3rship.dto.CommentDto;
-import com.sharegoods.inth3rship.dto.ItemThumbnailsDto;
-import com.sharegoods.inth3rship.models.Comment;
+import com.sharegoods.inth3rship.dto.*;
 import com.sharegoods.inth3rship.exceptions.ItemNotFoundException;
 import com.sharegoods.inth3rship.exceptions.RatingException;
 import com.sharegoods.inth3rship.exceptions.UserNotFoundException;
 import com.sharegoods.inth3rship.exceptions.VoteTwiceException;
+import com.sharegoods.inth3rship.models.Comment;
 import com.sharegoods.inth3rship.models.Image;
 import com.sharegoods.inth3rship.models.Item;
-import com.sharegoods.inth3rship.services.ChatService;
-import com.sharegoods.inth3rship.services.ImageService;
-import com.sharegoods.inth3rship.services.ItemService;
-import com.sharegoods.inth3rship.services.CommentService;
-import com.sharegoods.inth3rship.services.RatingService;
+import com.sharegoods.inth3rship.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -180,11 +172,32 @@ public class ItemController {
 
     /***** rating ****/
 
-    // By posting Rating, every time we create (assign) a value to column "rating" in DB.
-    @PostMapping("/users/{userId}/items/{itemId}/rating")
-    public ResponseEntity updateRating(@PathVariable("userId") Long userId,
-                                       @PathVariable("itemId") Long itemId,
-                                       @RequestParam("rating") Double rating) {
+    @GetMapping("/items/{itemId}/rating")
+    public ResponseEntity getRating(@PathVariable("itemId") Long id) {
+        try{
+            Item item = itemService.getItemById(id);
+            ItemDto itemDto = new ItemDto(item);
+            return ResponseEntity.status(HttpStatus.OK).body(itemDto);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Rating not found");
+        }
+    }
+
+    @GetMapping("/users/{userId}/items/{itemId}/checkRating")
+    public ResponseEntity checkIfVoted(@PathVariable("userId") Long userId,
+                                       @PathVariable("itemId") Long itemId) {
+        try {
+            Boolean response = ratingService.validationRating(userId, itemId);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Rating not found True/False");
+        }
+    }
+
+    @PostMapping("/users/{userId}/items/{itemId}/addRating/{rating}")
+    public ResponseEntity addRating(@PathVariable("userId") Long userId,
+                                    @PathVariable("itemId") Long itemId,
+                                    @PathVariable("rating") Double rating) {
         try {
             ratingService.createRating(userId, itemId, rating);
             Item item = itemService.getItemById(itemId);
