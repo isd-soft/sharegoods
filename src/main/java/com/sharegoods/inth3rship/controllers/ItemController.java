@@ -126,7 +126,7 @@ public class ItemController {
         }
     }
 
-    /***** comments ****/
+    /***** comments *****/
 
     @GetMapping("/items/{id}/comments")
     public ResponseEntity getComments(@PathVariable("id") Long id) {
@@ -149,7 +149,7 @@ public class ItemController {
         return ResponseEntity.status(HttpStatus.OK).body(commentDto);
     }
 
-    @DeleteMapping("/items/{itemId}/comments/{id}")
+    @DeleteMapping("items/{itemId}/comments/{id}")
     public ResponseEntity deleteComment(@PathVariable("id") Long id) {
         try {
             commentService.deleteComment(id);
@@ -159,7 +159,18 @@ public class ItemController {
         }
     }
 
-    /***** rating ****/
+    @PutMapping("items/{itemId}/comments/{id}")
+    public ResponseEntity updateComment(@PathVariable("id") Long id,  @RequestParam("comment") String comment) {
+        try {
+            Comment updatedComment = commentService.updateComment(id, comment);
+            CommentDto commentDto = new CommentDto(updatedComment);
+            return ResponseEntity.status(HttpStatus.OK).body(commentDto);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Comment not found");
+        }
+    }
+
+    /***** rating *****/
 
     @GetMapping("/items/{itemId}/rating")
     public ResponseEntity getRating(@PathVariable("itemId") Long id) {

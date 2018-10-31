@@ -11,6 +11,7 @@ public class CommentDto {
 
     Long id;
     Long itemId;
+    Long userId;
     Timestamp dateTime;
     String comment;
     String userName;
@@ -18,6 +19,7 @@ public class CommentDto {
     public CommentDto(Comment comment) {
         this.id = comment.getId();
         this.itemId = comment.getItem().getId();
+        this.userId = comment.getUser().getId();
         this.dateTime = comment.getDateTime();
         this.comment = comment.getComment();
         this.userName = comment.getUser().getFirstName() + ' ' + comment.getUser().getLastName();
@@ -49,6 +51,10 @@ public class CommentDto {
         this.itemId = itemId;
     }
 
+    public Long getUserId() { return userId; }
+
+    public void setUserId(Long userId) { this.userId = userId; }
+
     public Timestamp getDateTime() {
         return dateTime;
     }
@@ -65,7 +71,8 @@ public class CommentDto {
         this.comment = comment;
     }
 
-    public String getUserName() {return userName; }
+    public String getUserName() { return userName; }
 
     public void setUserName(String userName) { this.userName = userName; }
+
 }

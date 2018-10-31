@@ -26,6 +26,11 @@ public class CommentService {
         return commentRepository.findAllByItem(item);
     }
 
+    public Comment getCommentById(Long id) {
+        Optional<Comment> optionalComment = commentRepository.findById(id);
+        return optionalComment.get();
+    }
+
     public Comment addComment(Long itemId, Long userId, String comment) {
         User user = userService.getUserById(userId);
         Item item = itemService.getItemById(itemId);
@@ -34,6 +39,12 @@ public class CommentService {
         Comment newComment = new Comment(item, user, date, comment);
         commentRepository.save(newComment);
         return newComment;
+    }
+
+    public Comment updateComment(Long id, String comment) {
+        Comment commentToUpdate = getCommentById(id);
+        commentToUpdate.setComment(comment);
+        return commentRepository.save(commentToUpdate);
     }
 
     public void deleteComment(Long id) {
