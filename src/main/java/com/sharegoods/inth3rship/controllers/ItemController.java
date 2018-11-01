@@ -12,6 +12,9 @@ import com.sharegoods.inth3rship.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,28 +41,35 @@ public class ItemController {
     private ChatService chatService;
 
     @GetMapping("/users/{userId}/items")
-    public ResponseEntity getItemsByUserId(@PathVariable("userId") Long userId) {
+    public ResponseEntity getItemsByUserId(@PathVariable("userId") Long userId,
+                                           @RequestParam(value = "search", required = false) String searchQuery,
+                                           @RequestParam(value = "value", required = false) String sortBy,
+                                           @RequestParam(value = "direction", required = false) String sortDirection) {
         try {
-            List<Item> itemList = itemService.getItemsByUserId(userId);
-
+            List<Item> itemList = itemService.getItemsByUserId(userId, searchQuery, sortBy, sortDirection);
             if (itemList.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body("User has not items");
+                return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body("User has no items");
             }
 
-            List<ItemDto> itemDtoList = ItemDto.getItemDtoList(itemList);
-            return ResponseEntity.status(HttpStatus.OK).body(itemDtoList);
+            Map<Item, Image> itemHashMap = itemService.getItemsWithThumbnails(itemList);
+            List<ItemThumbnailsDto> itemThumbnailsDtoList = ItemThumbnailsDto.getItemThumbnailsDtoList(itemHashMap);
+            return ResponseEntity.status(HttpStatus.OK).body(itemThumbnailsDtoList);
 
-        } catch (NoSuchElementException e) {
+        } catch (UserNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
     }
 
     @GetMapping("/items")
-    public ResponseEntity getItems(@RequestParam("value") String value, @RequestParam("direction") String direction) {
-        List<Item> itemList = itemService.getItems(value, direction);
+    public ResponseEntity getItems(@RequestParam(value = "search", required = false) String searchQuery,
+                                   @RequestParam(value = "value", required = false) String sortBy,
+                                   @RequestParam(value = "direction", required = false) String sortDirection) {
+
+        List<Item> itemList = itemService.getItems(searchQuery, sortBy, sortDirection);
         if (itemList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body("No items found");
         }
+
         Map<Item, Image> itemHashMap = itemService.getItemsWithThumbnails(itemList);
         List<ItemThumbnailsDto> itemThumbnailsDtoList = ItemThumbnailsDto.getItemThumbnailsDtoList(itemHashMap);
         return ResponseEntity.status(HttpStatus.OK).body(itemThumbnailsDtoList);
@@ -80,18 +90,6 @@ public class ItemController {
         }
     }
 
-    @GetMapping("/items/search")
-    public ResponseEntity getItemsByTitle(@RequestParam("title") String title,
-                                          @RequestParam("value") String value, @RequestParam("direction") String direction) {
-        List<Item> itemList = itemService.getItemsByTitle(title, value, direction);
-        if (itemList.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body("No items found containing '" + title + "'");
-        }
-        Map<Item, Image> itemHashMap = itemService.getItemsWithThumbnails(itemList);
-        List<ItemThumbnailsDto> itemThumbnailsDtoList = ItemThumbnailsDto.getItemThumbnailsDtoList(itemHashMap);
-        return ResponseEntity.status(HttpStatus.OK).body(itemThumbnailsDtoList);
-    }
-
     @PostMapping("/users/{id}/items")
     public ResponseEntity createItem(@PathVariable("id") Long userId,
                                      @RequestParam("title") String title,
@@ -103,12 +101,18 @@ public class ItemController {
     }
 
     @DeleteMapping("/items/{id}")
-    public ResponseEntity deleteItem(@PathVariable("id") Long id) {
+    public ResponseEntity deleteItem(@PathVariable("id") Long itemId) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
         try {
-            itemService.deleteItem(id);
+            itemService.deleteItem(email, itemId);
             return ResponseEntity.status(HttpStatus.OK).body("Deleted successfully");
         } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or item not found");
+        } catch (AccessDeniedException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
 

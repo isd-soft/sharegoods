@@ -1,6 +1,7 @@
 package com.sharegoods.inth3rship.services;
 
 import com.sharegoods.inth3rship.common.MyUserPrincipal;
+import com.sharegoods.inth3rship.exceptions.DeleteAdminException;
 import com.sharegoods.inth3rship.models.User;
 import com.sharegoods.inth3rship.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -84,7 +87,13 @@ public class UserService implements UserDetailsService {
         return userRepository.save(userToUpdate);
     }
 
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+    public void deleteUser(Long idToDelete, String email) throws DeleteAdminException {
+        User user = findUserByEmail(email);
+        if(idToDelete != user.getId()) {
+            userRepository.deleteById(idToDelete);
+        } else {
+            throw new DeleteAdminException("are you mad bro?");
+        }
+
     }
 }

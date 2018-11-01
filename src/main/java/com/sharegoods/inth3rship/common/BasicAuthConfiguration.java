@@ -47,9 +47,12 @@ public class BasicAuthConfiguration extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .authorizeRequests()
                     .antMatchers(HttpMethod.OPTIONS,"/**").permitAll()
+
+                    .antMatchers(HttpMethod.GET, "/users").hasAuthority("ADMIN")
+                    .antMatchers(HttpMethod.DELETE, "/users/**").hasAuthority("ADMIN")
+
                     .antMatchers("/users/login").permitAll()
                     .antMatchers(HttpMethod.POST, "/users").permitAll()
-                    .antMatchers(HttpMethod.GET, "/users").hasAuthority("ADMIN")
                     .antMatchers(HttpMethod.GET, "/users/**").permitAll()
                     .antMatchers(HttpMethod.GET, "/items").permitAll()
                     .antMatchers(HttpMethod.GET, "/items/**").permitAll()

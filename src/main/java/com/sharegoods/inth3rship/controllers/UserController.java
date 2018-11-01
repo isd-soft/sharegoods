@@ -1,6 +1,8 @@
 package com.sharegoods.inth3rship.controllers;
 
+import com.sharegoods.inth3rship.common.MyUserPrincipal;
 import com.sharegoods.inth3rship.dto.UserDto;
+import com.sharegoods.inth3rship.exceptions.DeleteAdminException;
 import com.sharegoods.inth3rship.models.Item;
 import com.sharegoods.inth3rship.services.ChatService;
 import com.sharegoods.inth3rship.services.ItemService;
@@ -11,8 +13,12 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -82,12 +88,18 @@ public class UserController {
     }
 
     @DeleteMapping("/users/{id}")
-    public ResponseEntity deleteItem(@PathVariable("id") Long id) {
+    public ResponseEntity deleteItem(@PathVariable("id") Long idToDelete) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
         try {
-            userService.deleteUser(id);
-            return ResponseEntity.status(HttpStatus.OK).body("User was deleted successfully !");
+            userService.deleteUser(idToDelete, email);
+            return ResponseEntity.status(HttpStatus.OK).body("User was successfully deleted");
         } catch (EmptyResultDataAccessException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User to be deleted cannot be found");
+        } catch (DeleteAdminException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
 

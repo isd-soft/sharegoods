@@ -20,6 +20,7 @@ public class Rating {
     @ManyToOne
     @JoinColumn(name = "user_id")
     @NotNull
+    @OnDelete(action = OnDeleteAction.CASCADE)
     public User user;
 
     @ManyToOne
