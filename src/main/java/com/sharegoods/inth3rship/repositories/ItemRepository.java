@@ -10,8 +10,14 @@ import java.util.List;
 
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long> {
-    List<Item> findByUser(User user);
+
+    // For any user
     List<Item> findAll(Sort order);
     List<Item> findAllByTitleContainingIgnoreCase(String title, Sort order);
+
+    // For specific user
+    List<Item> findAllByUser(User user, Sort order);
+    List<Item> findAllByUserAndTitleContainingIgnoreCase(User user, String title, Sort order);
+
 }
 

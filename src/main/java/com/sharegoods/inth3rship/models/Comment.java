@@ -23,6 +23,7 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "user_id")
     @NotNull
+    @OnDelete(action = OnDeleteAction.CASCADE)
     public User user;
 
     @NotNull

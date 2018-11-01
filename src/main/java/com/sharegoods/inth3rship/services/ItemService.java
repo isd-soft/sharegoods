@@ -1,11 +1,13 @@
 package com.sharegoods.inth3rship.services;
 
+import com.sharegoods.inth3rship.exceptions.UserNotFoundException;
 import com.sharegoods.inth3rship.models.Image;
 import com.sharegoods.inth3rship.models.Item;
 import com.sharegoods.inth3rship.models.User;
 import com.sharegoods.inth3rship.repositories.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,31 +29,66 @@ public class ItemService {
     @Autowired
     private MailService mailService;
 
-    public List<Item> getItemsByUserId(Long id) {
-        User user = userService.getUserById(id);
-        return itemRepository.findByUser(user);
+    public List<Item> getItemsByUserId(Long userId, String searchQuery, String sortBy, String sortDirection) throws UserNotFoundException {
+
+        // User
+        User user;
+        try {
+            user = userService.getUserById(userId);
+        } catch (NoSuchElementException e) {
+            throw new UserNotFoundException("User with id " + userId + "does not exist");
+        }
+
+        // Sorting
+        Sort sort = getSorting(sortBy, sortDirection);
+
+        // With search query
+        if (searchQuery != null && !searchQuery.isEmpty()) {
+            return itemRepository.findAllByUserAndTitleContainingIgnoreCase(user, searchQuery, sort);
+        }
+
+        // Without search query
+        List<Item> itemsList = itemRepository.findAllByUser(user, sort);
+        return itemsList;
+
     }
 
-    public List<Item> getItems(String value, String direction) {
-        Sort sortByValue = getSorting(value, direction);
-        return itemRepository.findAll(sortByValue);
-    }
+    public List<Item> getItems(String searchQuery, String sortBy, String sortDirection) {
 
-    public List<Item> getItemsByTitle(String title, String value, String direction) {
-        Sort sortByValue = getSorting(value, direction);
-        return itemRepository.findAllByTitleContainingIgnoreCase(title, sortByValue);
+        // Sorting
+        Sort sort = getSorting(sortBy, sortDirection);
+
+        // With search query
+        if (searchQuery != null && !searchQuery.isEmpty()) {
+
+            List<Item> itemsList = itemRepository.findAllByTitleContainingIgnoreCase(searchQuery, sort);
+            System.out.println(itemsList);
+            return itemsList;
+        }
+
+        // Without search query
+        List<Item> itemsList = itemRepository.findAll(sort);
+        return itemsList;
     }
 
     public Sort getSorting(String value, String direction) {
-        Sort.Direction sortDirection = Sort.Direction.ASC;
-        if (direction.equals("Desc")) {
+
+        String sortValue;
+        Sort.Direction sortDirection;
+
+        if (value == null || value.isEmpty()) {
+            sortValue = "Rating";
+        } else {
+            sortValue = value;
+        }
+
+        if (direction == null || direction.equals("Asc")) {
+            sortDirection = Sort.Direction.ASC;
+        } else {
             sortDirection = Sort.Direction.DESC;
         }
-        if (value.equals("Title")) {
-            return Sort.by(new Sort.Order(sortDirection, value).ignoreCase());
-        } else {
-            return Sort.by(new Sort.Order(sortDirection, value));
-        }
+
+        return Sort.by(new Sort.Order(sortDirection, sortValue).ignoreCase());
     }
 
     public Item getItemById(Long id) {
@@ -87,8 +124,17 @@ public class ItemService {
         return newItem;
     }
 
-    public void deleteItem(Long id) {
-        itemRepository.deleteById(id);
+    public void deleteItem(String email, Long id) throws AccessDeniedException {
+        User user = userService.findUserByEmail(email);
+        Item item = getItemById(id);
+
+        if(user.getRole().equals("ADMIN") | user.getId().equals(item.getUser().getId())) {
+            itemRepository.deleteById(id);
+        } else {
+            throw new AccessDeniedException("User " + user.getId() + " with role " + user.getRole() + " has no access to delete item " + item.getId());
+        }
+
+
     }
 
     public Item updateItem(Long itemId, String title, String description, List<MultipartFile> imageFiles) {

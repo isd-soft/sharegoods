@@ -11,12 +11,16 @@ public class ItemThumbnailsDto {
     private String title;
     private ImageDto thumbnailDto;
     private Double rating;
+    private Long itemUserId;
+    private String itemUserName;
 
-    public ItemThumbnailsDto(Long itemId, String title, ImageDto thumbnailDto, Double rating) {
+    public ItemThumbnailsDto(Long itemId, String title, Long itemUserId, String itemUserFirstName, String itemUserLastName, ImageDto thumbnailDto, Double rating) {
         this.itemId = itemId;
         this.title = title;
         this.thumbnailDto = thumbnailDto;
         this.rating = rating;
+        this.itemUserId = itemUserId;
+        this.itemUserName = itemUserFirstName + " " + itemUserLastName;
     }
 
     public static List<ItemThumbnailsDto> getItemThumbnailsDtoList (Map<Item, Image> itemHashMap) {
@@ -29,7 +33,7 @@ public class ItemThumbnailsDto {
             if (itemRating == null) {
                 itemRating = 0.0;
             }
-            ItemThumbnailsDto itemThumbnailsDto = new ItemThumbnailsDto(item.getId(), item.getTitle(), thumbnailDto, itemRating);
+            ItemThumbnailsDto itemThumbnailsDto = new ItemThumbnailsDto(item.getId(), item.getTitle(), item.getUser().getId(), item.getUser().getFirstName(), item.getUser().getLastName(), thumbnailDto, itemRating);
             itemThumbnailsDtoList.add(itemThumbnailsDto);
         }
 
@@ -63,4 +67,20 @@ public class ItemThumbnailsDto {
     public Double getRating() { return rating; }
 
     public void setRating(Double rating) { this.rating = rating; }
+
+    public Long getItemUserId() {
+        return itemUserId;
+    }
+
+    public void setItemUserId(Long itemUserId) {
+        this.itemUserId = itemUserId;
+    }
+
+    public String getItemUserName() {
+        return itemUserName;
+    }
+
+    public void setItemUserName(String itemUserName) {
+        this.itemUserName = itemUserName;
+    }
 }
