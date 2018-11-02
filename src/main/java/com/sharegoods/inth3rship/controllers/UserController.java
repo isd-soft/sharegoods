@@ -1,11 +1,8 @@
 package com.sharegoods.inth3rship.controllers;
 
-import com.sharegoods.inth3rship.common.MyUserPrincipal;
 import com.sharegoods.inth3rship.dto.UserDto;
 import com.sharegoods.inth3rship.exceptions.DeleteAdminException;
-import com.sharegoods.inth3rship.models.Item;
 import com.sharegoods.inth3rship.services.ChatService;
-import com.sharegoods.inth3rship.services.ItemService;
 import com.sharegoods.inth3rship.services.UserService;
 import com.sharegoods.inth3rship.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +10,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -26,9 +21,6 @@ import java.util.NoSuchElementException;
 public class UserController {
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private ItemService itemService;
 
     @Autowired
     private ChatService chatService;
@@ -77,7 +69,7 @@ public class UserController {
     }
 
     @PutMapping("/users/{id}")
-    public ResponseEntity updateUser(@RequestBody User user, @PathVariable("id") Long id) {
+    public ResponseEntity updateUser(@PathVariable("id") Long id, @RequestBody User user) {
         try {
             User updatedUser = userService.updateUser(id, user);
             UserDto userDto = new UserDto(updatedUser);
