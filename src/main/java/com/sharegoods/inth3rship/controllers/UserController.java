@@ -95,16 +95,15 @@ public class UserController {
         }
     }
 
-    @GetMapping("/users/{userId}/accessItem/{authorId}")
-    public ResponseEntity addChatRoom(@PathVariable("userId") Long userId, @PathVariable("authorId") Long authorId) {
+    @GetMapping("/users/{userId}/otherUser/{otherUserId}")
+    public ResponseEntity addChatRoom(@PathVariable("userId") Long userId,
+                                      @PathVariable("otherUserId") Long otherUserId) {
         try {
-            User author = userService.getUserById(authorId);
-            Long itemAuthorId = author.getId();
-            chatService.addChatRoom(userId, itemAuthorId);
+            chatService.addChatRoom(userId, otherUserId);
             return ResponseEntity.status(HttpStatus.OK).body("Chat room was created");
         }
         catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Current user or author not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or otherUser cannot be found");
         }
     }
 }

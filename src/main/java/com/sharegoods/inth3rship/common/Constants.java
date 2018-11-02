@@ -6,5 +6,8 @@ public final class Constants {
         // restrict instantiation
     }
     public static final String serverUrl = "http://localhost:4200";
+    public static final String userOnline = "online";
+    public static final String userOffline = "offline";
+
 
 }

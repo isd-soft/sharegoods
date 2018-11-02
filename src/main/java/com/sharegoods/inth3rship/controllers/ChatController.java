@@ -3,7 +3,9 @@ package com.sharegoods.inth3rship.controllers;
 import com.sharegoods.inth3rship.common.WebSocket.WebSocketEventListener;
 import com.sharegoods.inth3rship.models.ChatMessage;
 import com.sharegoods.inth3rship.models.ChatRoom;
+import com.sharegoods.inth3rship.models.User;
 import com.sharegoods.inth3rship.services.ChatService;
+import com.sharegoods.inth3rship.services.UserService;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +21,9 @@ import static java.lang.String.format;
 
 @Controller
 public class ChatController {
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private ChatService chatService;
@@ -44,28 +49,35 @@ public class ChatController {
     public void sendChatRoom(ChatRoom chatRoom) {
         JSONObject chatRoomInfo;
         String userName = chatRoom.getSender().getFirstName() + ' ' + chatRoom.getSender().getLastName();
-        String authorName = chatRoom.getReceiver().getFirstName() + ' ' + chatRoom.getReceiver().getLastName();
+        String otherUserName = chatRoom.getReceiver().getFirstName() + ' ' + chatRoom.getReceiver().getLastName();
 
         JSONObject user = new JSONObject().put("id", chatRoom.getSender().getId()).put("name", userName);
-        JSONObject author = new JSONObject().put("id", chatRoom.getReceiver().getId()).put("name", authorName);
+        JSONObject otherUser = new JSONObject().put("id", chatRoom.getReceiver().getId()).put("name", otherUserName);
 
-        // For initiator
-        chatRoomInfo = new JSONObject().put("chatRoomId", chatRoom.getId()).put("user", user).put("otherUser", author).put("type", "ADD");
+        // For initiator (user)
+        chatRoomInfo = new JSONObject().put("chatRoomId", chatRoom.getId()).put("user", user).put("otherUser", otherUser).put("type", "ADD");
         messagingTemplate.convertAndSend(format("/channel/user/%s", chatRoom.getSender().getId()), chatRoomInfo.toString());
 
-        // For author
-        chatRoomInfo = new JSONObject().put("chatRoomId", chatRoom.getId()).put("otherUser", user).put("user", author).put("type", "ADD");
+        // For item author (otherUser)
+        chatRoomInfo = new JSONObject().put("chatRoomId", chatRoom.getId()).put("otherUser", user).put("user", otherUser).put("type", "ADD");
         messagingTemplate.convertAndSend(format("/channel/user/%s", chatRoom.getReceiver().getId()), chatRoomInfo.toString());
     }
 
     public void sendRemoveChatRoom(Long chatRoomId, Long informUserId) {
         JSONObject message = new JSONObject().put("chatRoomId", chatRoomId).put("type", "REMOVE");
         messagingTemplate.convertAndSend(format("/channel/user/%s", informUserId), message.toString());
-
     }
 
+    public void sendUserStatus(Long userId, String status, Long informUserId) {
+        JSONObject user = new JSONObject().put("id",userId).put("status",status);
+        JSONObject message = new JSONObject().put("type","STATUS").put("user",user);
+        messagingTemplate.convertAndSend(format("/channel/user/%s", informUserId), message.toString());
+    }
+
+    // FIXME: 02.11.2018 Should add validation and data from sessionId not pathVar !
     @MessageMapping("/chat/user/{userId}")
-    public void personalChannel(@DestinationVariable String userId) {
-        messagingTemplate.convertAndSend(format("/channel/user/%s", userId));
+    public void personalChannel(@DestinationVariable Long userId) {
+        User user = userService.getUserById(userId);
+        chatService.sendUserRoomsIfExist(user);
     }
 }
