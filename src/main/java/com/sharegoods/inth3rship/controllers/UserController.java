@@ -65,6 +65,9 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.OK).body(user);
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already exists");
+        } catch (IllegalAccessException i) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nevalid password!!!");
+
         }
     }
 
