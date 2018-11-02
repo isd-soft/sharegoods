@@ -11,8 +11,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -77,13 +75,11 @@ public class UserService implements UserDetailsService {
         final Pattern pattern1 = Pattern.compile("[a-z]");
         final Pattern pattern2 = Pattern.compile("[A-Z]");
         final Pattern pattern3 = Pattern.compile("[0-9]");
-        final Pattern pattern4 = Pattern.compile("[!@#$&*]");
 
 
         String password = newUser.getPassword();
 
-        if (pattern1.matcher(password).find() && pattern2.matcher(password).find() && pattern3.matcher(password).find() &&
-                pattern4.matcher(password).find()) {
+        if (pattern1.matcher(password).find() && pattern2.matcher(password).find() && pattern3.matcher(password).find()) {
             newUser.setPassword(bCryptPasswordEncoder.encode(newUser.getPassword()));
             newUser.setRole("USER");
             return userRepository.save(newUser);
