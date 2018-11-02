@@ -113,7 +113,7 @@ public class ItemService {
         Timestamp date = new Timestamp(dateNow.getTime());
         Item newItem = new Item(user, date, title, description);
         itemRepository.save(newItem);
-        imageService.createImages(newItem, imageFiles);
+        imageService.createImages(newItem, imageFiles, true);
 
         List<String> emails = userService.getAllEmails(user.getEmail());
         new Thread( () -> {
@@ -133,15 +133,13 @@ public class ItemService {
         } else {
             throw new AccessDeniedException("User " + user.getId() + " with role " + user.getRole() + " has no access to delete item " + item.getId());
         }
-
-
     }
 
-    public Item updateItem(Long itemId, String title, String description, List<MultipartFile> imageFiles) {
+    public Item updateItem(Long itemId, String title, String description, List<MultipartFile> imageFiles, List<String> imageIds) {
         Item item = getItemById(itemId);
         item.setTitle(title);
         item.setDescription(description);
-        imageService.updateItemImages(item, imageFiles);
+        imageService.updateItemImages(item, imageFiles, imageIds);
         return itemRepository.save(item);
     }
 

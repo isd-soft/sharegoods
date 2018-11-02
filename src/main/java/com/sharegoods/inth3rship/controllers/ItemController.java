@@ -100,7 +100,6 @@ public class ItemController {
 
     @DeleteMapping("/items/{id}")
     public ResponseEntity deleteItem(@PathVariable("id") Long itemId) {
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
 
@@ -118,14 +117,23 @@ public class ItemController {
     public ResponseEntity updateItem(@PathVariable("itemId") Long itemId,
                                      @RequestParam("title") String title,
                                      @RequestParam("description") String description,
-                                     @RequestParam("file") List<MultipartFile> imageFiles) {
+                                     @RequestParam("file") List<MultipartFile> imageFiles,
+                                     @RequestParam(value = "uploadedImagesIds", required = false) List<String> imageIds) {
         try {
-            Item item = itemService.updateItem(itemId, title, description, imageFiles);
+            Item item = itemService.updateItem(itemId, title, description, imageFiles, imageIds);
             ItemDto itemDto = new ItemDto(item);
             return ResponseEntity.status(HttpStatus.OK).body(itemDto);
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item not found");
         }
+    }
+
+    /***** image *****/
+
+    @GetMapping("/items/getImage/{id}")
+    public byte[] getImage(@PathVariable("id") Long id) {
+        Image image = imageService.getImageById(id);
+        return image.getImageData();
     }
 
     /***** comments *****/

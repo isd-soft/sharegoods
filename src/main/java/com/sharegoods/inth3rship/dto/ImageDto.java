@@ -9,12 +9,14 @@ import java.util.ListIterator;
 
 public class ImageDto {
 
+    private Long id;
     private String name;
     private String imageBase64;
 
     public ImageDto(Image image) {
+        this.id = image.getId();
         this.name = image.getName();
-        imageBase64 = Base64Utils.encodeToString(image.getImageData());
+        this.imageBase64 = Base64Utils.encodeToString(image.getImageData());
     }
 
     public static List<ImageDto> getImageDtoList(List<Image> imageList) {
@@ -26,6 +28,10 @@ public class ImageDto {
         }
         return imageDtoList;
     }
+
+    public Long getId() { return id; }
+
+    public void setId(Long id) { this.id = id; }
 
     public String getName() {
         return name;

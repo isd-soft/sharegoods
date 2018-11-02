@@ -15,6 +15,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -34,7 +35,12 @@ public class ImageService {
         return imageRepository.findByItemAndThumbnail(item, false);
     }
 
-    public List<Image> createImages(Item item, List<MultipartFile> imageFiles) {
+    public Image getImageById(Long id) {
+        Optional<Image> optionalImage = imageRepository.findById(id);
+        return  optionalImage.get();
+    }
+
+    public List<Image> createImages(Item item, List<MultipartFile> imageFiles, Boolean withThumbnail) {
         List<Image> images = new ArrayList();
         byte[] arrayImg = null;
         if (imageFiles != null && !imageFiles.isEmpty()) {
@@ -47,7 +53,9 @@ public class ImageService {
                     e.printStackTrace();
                 }
             }
-            createThumbnail(images.get(0));
+            if (withThumbnail) {
+                createThumbnail(images.get(0));
+            }
         } else {
             // if item has no images, save noimage available
             ClassPathResource noImage = new ClassPathResource("images/noimage.png");
@@ -66,9 +74,38 @@ public class ImageService {
         imageRepository.deleteByItem(item);
     }
 
-    public void updateItemImages(Item item, List<MultipartFile> imageFiles) {
-        deleteImagesByItem(item);
-        createImages(item, imageFiles);
+    public void deleteImage(Long id) {
+        imageRepository.deleteById(id);
+    }
+
+    public void updateItemImages(Item item, List<MultipartFile> imageFiles, List<String> imagesIds) {
+        if (imagesIds == null) {
+            deleteImagesByItem(item);
+            createImages(item, imageFiles, true);
+            return;
+        }
+
+        List<Long> imageIds = new ArrayList<>(imagesIds.size());
+        for(String current: imagesIds){
+            imageIds.add(Long.parseLong(current));
+        }
+
+        List<Image> itemImages = getImagesByItemId(item.getId());
+        for (Image image: itemImages) {
+            if (!imageIds.contains(image.getId())) {
+                deleteImage(image.getId());
+            }
+        }
+
+        Image thumbnail = getThumbnail(item);
+        Image firstImage = getImageById(imageIds.get(0));
+        if (!thumbnail.getName().contains(firstImage.getName())) {
+            deleteImage(thumbnail.getId());
+            createThumbnail(firstImage);
+        }
+        if (imageFiles != null) {
+            createImages(item, imageFiles, false);
+        }
     }
 
     public void createThumbnail(Image image) {
