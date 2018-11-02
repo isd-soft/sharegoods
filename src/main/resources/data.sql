@@ -4,7 +4,7 @@ INSERT INTO Users (FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, ROLE) VALUES
 
 INSERT INTO Items (USER_ID, DATE_TIME, TITLE, DESCRIPTION) VALUES
   (1, '2018-10-16 22:30:00', 'Apple MacBook Pro 15.4-Inch Laptop', 'Macbook-ul de 12 inch este cel mai atractiv model de laptop Apple în materie de preţ. Memoria RAM de 8 GB, hard disk SSD de până la 512 GB, autonomia bateriei de 10 ore.'),
-  (1, '2018-05-12 22:10:00', 'NIKE Womens Benassi Just Do It Synthetic Sandal', 'Womens NIKE benassi just do it. Sandal features a lined upper with a bold logo for plush comfort and an athletic look. A foam-infused midsole and outsole provide lightweight impact protection.'),
+  (1, '2018-05-12 22:10:00', 'NIKE Women Benassi Just Do It Synthetic Sandal', 'Women NIKE benassi just do it. Sandal features a lined upper with a bold logo for plush comfort and an athletic look. A foam-infused midsole and outsole provide lightweight impact protection.'),
   (1, '2018-06-16 09:00:00', 'Double Bass with an Adjustable Bridge', 'Package Includes: Padded nylon soft case with accessories pockets Brazilwood bow with ebony frog and unbleached genuine Mongolian horsehair High quality rosin cake.'),
   (2, '2018-01-18 10:00:00', '2 Slice Toaster, Cool Touch Stainless Steel Toaster', 'Whether you are preparing a sandwich or cheeses bagel, this reliable toasting gives you a crispy result every time, it is fast, efficient and user-friendly.'),
   (2, '2018-10-25 09:40:00', 'No Image Example', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam malesuada porttitor lobortis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse vel velit arcu. Nunc mi tellus'),
@@ -14,14 +14,11 @@ INSERT INTO Items (USER_ID, DATE_TIME, TITLE, DESCRIPTION) VALUES
   (2, '2018-06-16 10:01:00', 'Catan Expansion: Traders & Barbarians', 'Delve deep into Catan! In Catan: Traders & Barbarians youll find lots of cool new ways to explore Klaus Teubers award-winning game series. You can now play with just 2 players! Add a harbormaster, a friendly robber, or special events. ');
 
 
-
-
 INSERT INTO Images (NAME, IMAGE_DATA, ITEM_ID, THUMBNAIL) VALUES
 
  ('mac.jpg', FILE_READ('src/main/resources/images/mac.jpg'), 1, true),
  ('mac.jpg', FILE_READ('src/main/resources/images/mac1.jpg'), 1, false),
  ('mac1.jpg', FILE_READ('src/main/resources/images/mac1.jpg'), 1, false),
- ('mac2.jpg', FILE_READ('src/main/resources/images/mac2.jpg'), 1, false),
  ('mac3.jpg', FILE_READ('src/main/resources/images/mac3.jpg'), 1, false),
  ('mac4.jpg', FILE_READ('src/main/resources/images/mac4.jpg'), 1, false),
 
@@ -36,14 +33,12 @@ INSERT INTO Images (NAME, IMAGE_DATA, ITEM_ID, THUMBNAIL) VALUES
  ('bass1.jpg', FILE_READ('src/main/resources/images/bass1.jpg'), 3, false),
  ('bass2.jpg', FILE_READ('src/main/resources/images/bass2.jpg'), 3, false),
  ('bass3.jpg', FILE_READ('src/main/resources/images/bass3.jpg'), 3, false),
- ('bass4.jpg', FILE_READ('src/main/resources/images/bass4.jpg'), 3, false),
 
  ('toast.jpg', FILE_READ('src/main/resources/images/toast.jpg'), 4, true),
  ('toast.jpg', FILE_READ('src/main/resources/images/toast.jpg'), 4, false),
  ('toast1.jpg', FILE_READ('src/main/resources/images/toast1.jpg'), 4, false),
  ('toast2.jpg', FILE_READ('src/main/resources/images/toast2.jpg'), 4, false),
  ('toast3.jpg', FILE_READ('src/main/resources/images/toast3.jpg'), 4, false),
- ('toast4.jpg', FILE_READ('src/main/resources/images/toast4.jpg'), 4, false),
 
  ('noimage.png', FILE_READ('src/main/resources/images/noimage.png'), 5, true),
 
@@ -53,7 +48,7 @@ INSERT INTO Images (NAME, IMAGE_DATA, ITEM_ID, THUMBNAIL) VALUES
  ('jeans2.jpg', FILE_READ('src/main/resources/images/jeans2.jpg'), 6, false),
  ('jeans3.jpg', FILE_READ('src/main/resources/images/jeans3.jpg'), 6, false),
 
-   ('jbl.jpg', FILE_READ('src/main/resources/images/jbl.jpg'), 7, true),
+  ('jbl.jpg', FILE_READ('src/main/resources/images/jbl.jpg'), 7, true),
   ('jbl.jpg', FILE_READ('src/main/resources/images/jbl.jpg'), 7, false),
   ('jbl1.jpg', FILE_READ('src/main/resources/images/jbl1.jpg'), 7, false),
   ('jbl2.jpg', FILE_READ('src/main/resources/images/jbl2.jpg'), 7, false),
@@ -64,13 +59,11 @@ INSERT INTO Images (NAME, IMAGE_DATA, ITEM_ID, THUMBNAIL) VALUES
   ('drill1.jpg', FILE_READ('src/main/resources/images/drill1.jpg'), 8, false),
   ('drill2.jpg', FILE_READ('src/main/resources/images/drill2.jpg'), 8, false),
   ('drill3.jpg', FILE_READ('src/main/resources/images/drill3.jpg'), 8, false),
-  ('drill4.jpg', FILE_READ('src/main/resources/images/drill4.jpg'), 8, false),
 
   ('catan.jpg', FILE_READ('src/main/resources/images/catan.jpg'), 9, true),
   ('catan.jpg', FILE_READ('src/main/resources/images/catan.jpg'), 9, false),
   ('catan1.jpg', FILE_READ('src/main/resources/images/catan1.jpg'), 9, false),
   ('catan2.jpg', FILE_READ('src/main/resources/images/catan2.jpg'), 9, false),
-  ('catan3.jpg', FILE_READ('src/main/resources/images/catan3.jpg'), 9, false),
   ('catan4.jpg', FILE_READ('src/main/resources/images/catan4.jpg'), 9, false);
 
 
@@ -98,8 +91,8 @@ INSERT INTO Comments (COMMENT, DATE_TIME, ITEM_ID, USER_ID) VALUES
  ('I am 64 years old and have had many toasters in my life. I have never had one that smelled as noxious as this the first 5 ! times I heated it to "get off the manufacturing oils" as the instructions say. I have opened the windows and put on a fan.', '2018-10-16 07:00:00', 4, 1),
  ('This toaster is so slow, and even on the darkest setting, the bread is only slightly brown around the edges. ', '2018-10-16 08:00:00', 4, 2),
 
- ('', '2018-10-16 09:00:00', 5, 1),
- ('', '2018-10-16 10:00:00', 5, 2),
+ ('No comment', '2018-10-16 09:00:00', 5, 1),
+ ('No comment', '2018-10-16 10:00:00', 5, 2),
 
  ('Im not for leaving reviews but when it’s something I use a lot I wish someone would do the same for me someday. ', '2018-10-16 11:00:00', 6, 1),
  ('Not bad for less expensive jeans, but hardly the work horse the name implies.', '2018-10-16 12:00:00', 6, 2),
