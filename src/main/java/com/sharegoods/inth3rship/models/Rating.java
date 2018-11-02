@@ -13,7 +13,6 @@ public class Rating {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @Formula("select avg(r.rating) from Rating r where r.item_id = id")
     @NotNull
     private Double rating;
 

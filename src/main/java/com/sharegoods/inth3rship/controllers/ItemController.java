@@ -1,13 +1,8 @@
 package com.sharegoods.inth3rship.controllers;
 
 import com.sharegoods.inth3rship.dto.*;
-import com.sharegoods.inth3rship.exceptions.ItemNotFoundException;
-import com.sharegoods.inth3rship.exceptions.RatingException;
-import com.sharegoods.inth3rship.exceptions.UserNotFoundException;
-import com.sharegoods.inth3rship.exceptions.VoteTwiceException;
-import com.sharegoods.inth3rship.models.Comment;
-import com.sharegoods.inth3rship.models.Image;
-import com.sharegoods.inth3rship.models.Item;
+import com.sharegoods.inth3rship.exceptions.*;
+import com.sharegoods.inth3rship.models.*;
 import com.sharegoods.inth3rship.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,6 +34,9 @@ public class ItemController {
 
     @Autowired
     private ChatService chatService;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/users/{userId}/items")
     public ResponseEntity getItemsByUserId(@PathVariable("userId") Long userId,
@@ -176,8 +174,29 @@ public class ItemController {
 
     /***** rating *****/
 
-    @GetMapping("/items/{itemId}/rating")
-    public ResponseEntity getRating(@PathVariable("itemId") Long id) {
+    @PostMapping("/items/{itemId}/addRating")
+    public ResponseEntity createRating(@PathVariable("itemId") Long itemId,
+                                       @RequestParam("userId") Long userId,
+                                       @RequestParam("rating") Double rating) {
+        try {
+            ratingService.createRating(userId, itemId, rating);
+            Item item = itemService.getItemById(itemId);
+            ItemDto itemDto = new ItemDto(item);
+            return ResponseEntity.status(HttpStatus.OK).body(itemDto);
+
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status((HttpStatus.CONFLICT)).body(e.getMessage());
+        } catch (ItemNotFoundException e) {
+            return ResponseEntity.status((HttpStatus.CONFLICT)).body(e.getMessage());
+        } catch (RatingValidationException e) {
+            return ResponseEntity.status((HttpStatus.CONFLICT)).body(e.getMessage());
+        } catch (VoteTwiceException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/items/{itemId}/getAvgRating")
+    public ResponseEntity getAvgRating(@PathVariable("itemId") Long id) {
         try{
             Item item = itemService.getItemById(id);
             ItemDto itemDto = new ItemDto(item);
@@ -187,35 +206,20 @@ public class ItemController {
         }
     }
 
-    @GetMapping("/users/{userId}/items/{itemId}/checkRating")
-    public ResponseEntity checkIfVoted(@PathVariable("userId") Long userId,
-                                       @PathVariable("itemId") Long itemId) {
-        try {
-            Boolean response = ratingService.validationRating(userId, itemId);
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Rating not found True/False");
-        }
-    }
-
-    @PostMapping("/users/{userId}/items/{itemId}/addRating/{rating}")
-    public ResponseEntity addRating(@PathVariable("userId") Long userId,
-                                    @PathVariable("itemId") Long itemId,
-                                    @PathVariable("rating") Double rating) {
-        try {
-            ratingService.createRating(userId, itemId, rating);
-            Item item = itemService.getItemById(itemId);
-            ItemDto itemDto = new ItemDto(item);
-            return ResponseEntity.status(HttpStatus.OK).body(itemDto);
-
+    @GetMapping("/users/{userId}/items/{itemId}/getRating")
+    public ResponseEntity getUserRating(@PathVariable("userId") Long userId,
+                                        @PathVariable("itemId") Long itemId) {
+        try{
+            List<Rating> ratingList = ratingService.getRatingByItemAndUser(itemId, userId);
+            if(ratingList.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Rating was not found for user " + userId  + " and for item " + itemId);
+            }
+            RatingDto ratingDto = new RatingDto(ratingList.get(0));
+            return ResponseEntity.status(HttpStatus.OK).body(ratingDto);
         } catch (UserNotFoundException e) {
-            return ResponseEntity.status((HttpStatus.NOT_FOUND)).body("User not found");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (ItemNotFoundException e) {
-            return ResponseEntity.status((HttpStatus.NOT_FOUND)).body("Item not found");
-        } catch (RatingException e) {
-            return ResponseEntity.status((HttpStatus.NOT_FOUND)).body("Rating is not allowed: u’ve introduced number that is not in our boundaries. We allow only {1,2,3,4,5}");
-        } catch (VoteTwiceException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You’ve already voted, Snicky bastard");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
 }
