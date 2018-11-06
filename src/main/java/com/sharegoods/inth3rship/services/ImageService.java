@@ -99,10 +99,9 @@ public class ImageService {
 
         Image thumbnail = getThumbnail(item);
         Image firstImage = getImageById(imageIds.get(0));
-        if (!thumbnail.getName().contains(firstImage.getName())) {
-            deleteImage(thumbnail.getId());
-            createThumbnail(firstImage);
-        }
+        deleteImage(thumbnail.getId());
+        createThumbnail(firstImage);
+
         if (imageFiles != null) {
             createImages(item, imageFiles, false);
         }

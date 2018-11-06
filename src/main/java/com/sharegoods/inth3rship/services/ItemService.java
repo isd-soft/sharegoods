@@ -50,7 +50,6 @@ public class ItemService {
         // Without search query
         List<Item> itemsList = itemRepository.findAllByUser(user, sort);
         return itemsList;
-
     }
 
     public List<Item> getItems(String searchQuery, String sortBy, String sortDirection) {
@@ -62,7 +61,6 @@ public class ItemService {
         if (searchQuery != null && !searchQuery.isEmpty()) {
 
             List<Item> itemsList = itemRepository.findAllByTitleContainingIgnoreCase(searchQuery, sort);
-            System.out.println(itemsList);
             return itemsList;
         }
 
@@ -72,7 +70,6 @@ public class ItemService {
     }
 
     public Sort getSorting(String value, String direction) {
-
         String sortValue;
         Sort.Direction sortDirection;
 

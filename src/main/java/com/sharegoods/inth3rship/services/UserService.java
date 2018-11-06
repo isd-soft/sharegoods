@@ -4,6 +4,7 @@ import com.sharegoods.inth3rship.common.MyUserPrincipal;
 import com.sharegoods.inth3rship.exceptions.DeleteAdminException;
 import com.sharegoods.inth3rship.models.User;
 import com.sharegoods.inth3rship.repositories.UserRepository;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -70,37 +71,44 @@ public class UserService implements UserDetailsService {
         return null;
     }
 
-    public User createNewUser(User newUser) throws IllegalAccessException {
-
+    public Boolean isValidPassword(String password) {
         final Pattern pattern1 = Pattern.compile("[a-z]");
         final Pattern pattern2 = Pattern.compile("[A-Z]");
         final Pattern pattern3 = Pattern.compile("[0-9]");
+        return pattern1.matcher(password).find() && pattern2.matcher(password).find() && pattern3.matcher(password).find();
+    }
 
-
-        String password = newUser.getPassword();
-
-        if (pattern1.matcher(password).find() && pattern2.matcher(password).find() && pattern3.matcher(password).find()) {
+    public User createNewUser(User newUser) throws IllegalAccessException {
+        if (isValidPassword(newUser.getPassword())) {
             newUser.setPassword(bCryptPasswordEncoder.encode(newUser.getPassword()));
             newUser.setRole("USER");
             return userRepository.save(newUser);
         } else {
-            throw new IllegalAccessException("Incorect password!");
+            throw new IllegalAccessException("Incorrect password!");
         }
-
-
     }
-
 
     public User updateUser(Long id, User user) {
         User userToUpdate = getUserById(id);
         userToUpdate.setFirstName(user.getFirstName());
         userToUpdate.setLastName(user.getLastName());
         userToUpdate.setEmail((user.getEmail()));
-        if (!user.getPassword().isEmpty()) {
-            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            userToUpdate.setPassword(passwordEncoder.encode(user.getPassword()));
-        }
         return userRepository.save(userToUpdate);
+    }
+
+    public void changePassword(Long id, String oldPassword, String newPassword) throws IllegalAccessException, NotFoundException {
+        User userToUpdate = getUserById(id);
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        if (!oldPassword.isEmpty() && !passwordEncoder.matches(oldPassword, userToUpdate.getPassword())) {
+            throw new NotFoundException("Password does not match");
+        }
+
+        if (!newPassword.isEmpty() && isValidPassword(newPassword)) {
+            userToUpdate.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(userToUpdate);
+        } else {
+            throw new IllegalAccessException("Incorrect password!");
+        }
     }
 
     public void deleteUser(Long idToDelete, String email) throws DeleteAdminException {
@@ -110,6 +118,6 @@ public class UserService implements UserDetailsService {
         } else {
             throw new DeleteAdminException("are you mad bro?");
         }
-
     }
+
 }

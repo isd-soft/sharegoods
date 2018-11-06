@@ -5,6 +5,7 @@ import com.sharegoods.inth3rship.exceptions.DeleteAdminException;
 import com.sharegoods.inth3rship.services.ChatService;
 import com.sharegoods.inth3rship.services.UserService;
 import com.sharegoods.inth3rship.models.User;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -66,7 +67,7 @@ public class UserController {
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already exists");
         } catch (IllegalAccessException i) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nevalid password!!!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid password!!!");
 
         }
     }
@@ -79,6 +80,20 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.OK).body(userDto);
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("User with such email already exists");
+        }
+    }
+
+    @PutMapping("/users/{id}/updatepassword")
+    public ResponseEntity changePassword(@PathVariable("id") Long id,
+                                         @RequestParam String oldPassword,
+                                         @RequestParam String newPassword) {
+        try {
+            userService.changePassword(id, oldPassword, newPassword);
+            return ResponseEntity.status(HttpStatus.OK).body("Password updated successfully");
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Incorrect old password");
+        } catch (IllegalAccessException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid password");
         }
     }
 
