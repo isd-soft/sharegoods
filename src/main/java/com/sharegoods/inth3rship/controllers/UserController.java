@@ -2,10 +2,10 @@ package com.sharegoods.inth3rship.controllers;
 
 import com.sharegoods.inth3rship.dto.UserDto;
 import com.sharegoods.inth3rship.exceptions.DeleteAdminException;
+import com.sharegoods.inth3rship.exceptions.InvalidPasswordException;
 import com.sharegoods.inth3rship.services.ChatService;
 import com.sharegoods.inth3rship.services.UserService;
 import com.sharegoods.inth3rship.models.User;
-import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -90,10 +90,10 @@ public class UserController {
         try {
             userService.changePassword(id, oldPassword, newPassword);
             return ResponseEntity.status(HttpStatus.OK).body("Password updated successfully");
-        } catch (NotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Incorrect old password");
+        } catch (InvalidPasswordException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (IllegalAccessException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid password");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 

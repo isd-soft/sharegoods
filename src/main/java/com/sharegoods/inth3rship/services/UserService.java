@@ -2,9 +2,9 @@ package com.sharegoods.inth3rship.services;
 
 import com.sharegoods.inth3rship.common.MyUserPrincipal;
 import com.sharegoods.inth3rship.exceptions.DeleteAdminException;
+import com.sharegoods.inth3rship.exceptions.InvalidPasswordException;
 import com.sharegoods.inth3rship.models.User;
 import com.sharegoods.inth3rship.repositories.UserRepository;
-import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -96,18 +96,18 @@ public class UserService implements UserDetailsService {
         return userRepository.save(userToUpdate);
     }
 
-    public void changePassword(Long id, String oldPassword, String newPassword) throws IllegalAccessException, NotFoundException {
+    public void changePassword(Long id, String oldPassword, String newPassword) throws IllegalAccessException, InvalidPasswordException {
         User userToUpdate = getUserById(id);
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         if (!oldPassword.isEmpty() && !passwordEncoder.matches(oldPassword, userToUpdate.getPassword())) {
-            throw new NotFoundException("Password does not match");
+            throw new IllegalAccessException("Password does not match");
         }
 
         if (!newPassword.isEmpty() && isValidPassword(newPassword)) {
             userToUpdate.setPassword(passwordEncoder.encode(newPassword));
             userRepository.save(userToUpdate);
         } else {
-            throw new IllegalAccessException("Incorrect password!");
+            throw new InvalidPasswordException("Incorrect password!");
         }
     }
 
