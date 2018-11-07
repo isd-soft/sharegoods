@@ -4,6 +4,7 @@ import com.sharegoods.inth3rship.common.Constants;
 import com.sharegoods.inth3rship.models.User;
 import com.sharegoods.inth3rship.services.ChatService;
 import com.sharegoods.inth3rship.services.UserService;
+import org.apache.logging.log4j.spi.LoggerRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class WebSocketEventListener {
 
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
-        logger.info("Received a new web socket connection.");
+        //logger.info("Received a new web socket connection.");
 
         /* PIZDETS STARTS HERE */
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
@@ -41,7 +42,7 @@ public class WebSocketEventListener {
         headers={simpMessageType=CONNECT, stompCommand=CONNECT, nativeHeaders={login=[oxana@gmail.com],
         passcode=[PROTECTED], accept-version=[1.1,1.0], heart-beat=[10000,10000]}, simpSessionAttributes={},
         simpHeartbeat=[J@2efb430e, stompCredentials=[PROTECTED], simpSessionId=subicysg}], simpSessionId=subicysg} */
-        System.out.println(headersRaw);
+        //System.out.println(headersRaw);
 
         int loginStartPosition = headersRaw.indexOf("login=[");
         int loginEndPosition = headersRaw.indexOf("], passcode");
@@ -51,10 +52,11 @@ public class WebSocketEventListener {
 
         User user = userService.findUserByEmail(email);
         if (user != null) {
-            System.out.println("User exists");
+
+            System.out.println("User email exists in Database");
             chatService.addOnlineUser(user, accessor.getSessionId());
-            chatService.updateUserStatus(user.getId(), Constants.userOnline);
         } else {
+            //logger.info("User does not exist");
             System.out.println("User does not exist");
         }
     }

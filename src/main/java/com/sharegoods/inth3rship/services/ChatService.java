@@ -24,24 +24,21 @@ public class ChatService {
     private static Map<String, Long> onlineUsers = new HashMap<>();
 
     public void addOnlineUser(User user, String sessionId) {
-
         if (!ChatService.onlineUsers.containsValue(user.getId())) {
             ChatService.onlineUsers.put(sessionId, user.getId());
-            System.out.println("Users Online Map Updated: " + ChatService.onlineUsers);
-
-            updateUserStatus(user.getId(), Constants.userOnline);
-
+            System.out.println("User " + user.getId() + " added to Online Users Map. Current Map: " + ChatService.onlineUsers);
         } else {
-            System.out.println("User already exists in Online Users Map");
+            System.out.println("User " + user.getId() + " already exists in Online Users Map");
         }
+        updateUserStatus(user.getId(), Constants.userOnline);
     }
 
     public void removeOnlineUser(String sessionId) {
-        Long userId = onlineUsers.get(sessionId);
-        onlineUsers.remove(sessionId);
+        Long userId = ChatService.onlineUsers.get(sessionId);
+        ChatService.onlineUsers.remove(sessionId);
         updateUserStatus(userId, Constants.userOffline);
 
-        System.out.println("Users Online Updated: " + ChatService.onlineUsers);
+        System.out.println("User " + userId + " with SessionID " + sessionId + " removed from Online User Map. Current Map: " + ChatService.onlineUsers);
 
         // Will never delete rooms.
         // If no server-side sessions then should have some timeout, e.g. scheduled worker to clean the rooms
@@ -52,13 +49,15 @@ public class ChatService {
         User sender = userService.getUserById(userId);
         User receiver = userService.getUserById(otherUserId);
 
-        ChatRoom newChatRoom = new ChatRoom(++chatRoomId, sender, receiver);
+        long leftLimit = 1L;
+        long rightLimit = 100000000L;
+        chatRoomId = leftLimit + (long) (Math.random() * (rightLimit - leftLimit));
+
+        ChatRoom newChatRoom = new ChatRoom(chatRoomId, sender, receiver);
 
         if (!checkIfRoomExists(newChatRoom)) {
             ChatService.openChatRooms.add(newChatRoom);
-            System.out.println("New chat room:" + newChatRoom.getId());
-            System.out.println("with sender: " + newChatRoom.getSender().getId());
-            System.out.println("with receiver: " + newChatRoom.getReceiver().getId());
+            System.out.println("New chat room " + newChatRoom.getId() + " with Sender " + newChatRoom.getSender().getId() + " and Receiver " + newChatRoom.getReceiver().getId());
         }
         chatController.sendChatRoom(newChatRoom);
     }
@@ -79,9 +78,11 @@ public class ChatService {
             if (chatRoomId == newChatRoomId ||
                 (chatRoomFirstUserId == newChatRoomFirstUserId && chatRoomSecondUserId == newChatRoomSecondUserId) ||
                 (chatRoomFirstUserId == newChatRoomSecondUserId && chatRoomSecondUserId == newChatRoomFirstUserId)) {
+                System.out.println("Room exists");
                 return true;
             }
         }
+        System.out.println("Room does not exist");
         return false;
     }
 
@@ -90,11 +91,11 @@ public class ChatService {
         Iterator i = ChatService.openChatRooms.iterator();
         while (i.hasNext()) {
             ChatRoom chatRoom = (ChatRoom) i.next();
+            System.out.println("Room ID: " + chatRoom.getId() + " with Sender " + chatRoom.getSender().getEmail() + " and Receiver " + chatRoom.getReceiver().getEmail());
             if (chatRoom.getSender().getId() == userId || chatRoom.getReceiver().getId() == userId) {
                 chatController.sendChatRoom(chatRoom);
-                System.out.println("Sent room to users");
+                System.out.println("Sent room " + chatRoom.getId() + " to users " + chatRoom.getSender().getEmail() + " and " + chatRoom.getReceiver().getEmail());
             }
-
         }
     }
 

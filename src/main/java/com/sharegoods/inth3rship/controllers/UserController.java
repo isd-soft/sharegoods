@@ -124,4 +124,10 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or otherUser cannot be found");
         }
     }
+
+    @GetMapping("/users/{id}/status")
+    public ResponseEntity getUserStatusById(@PathVariable("id") Long id) {
+        Boolean result = chatService.isAuthorOnline(id);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
 }

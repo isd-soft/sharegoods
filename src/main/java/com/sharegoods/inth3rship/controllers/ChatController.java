@@ -41,8 +41,12 @@ public class ChatController {
     @MessageMapping("/chat/{roomId}/join")
     public void join(@DestinationVariable String roomId, @Payload ChatMessage chatMessage,
                         SimpMessageHeaderAccessor headerAccessor) {
+
+        // WHY DO WE NEED THIS HEADER ACCESSOR?
         String currentRoomId = (String) headerAccessor.getSessionAttributes().put("room_id", roomId);
         headerAccessor.getSessionAttributes().put("username", chatMessage.getSender());
+
+
         messagingTemplate.convertAndSend(format("/channel/%s", roomId), chatMessage);
     }
 
@@ -78,6 +82,9 @@ public class ChatController {
     @MessageMapping("/chat/user/{userId}")
     public void personalChannel(@DestinationVariable Long userId) {
         User user = userService.getUserById(userId);
+
+        System.out.println("User " + user.getEmail() + " subscribed to personal channel " + user.getId());
+
         chatService.sendUserRoomsIfExist(user);
     }
 }

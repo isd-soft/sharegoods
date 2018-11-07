@@ -8,6 +8,7 @@ public class ChatMessage {
     private MessageType messageType;
     private String content;
     private String sender;
+    private String receiver;
 
     public MessageType getType() {
         return messageType;
@@ -31,5 +32,25 @@ public class ChatMessage {
 
     public void setSender(String sender) {
         this.sender = sender;
+    }
+
+    public MessageType getMessageType()
+    {
+        return messageType;
+    }
+
+    public void setMessageType(MessageType messageType)
+    {
+        this.messageType = messageType;
+    }
+
+    public String getReceiver()
+    {
+        return receiver;
+    }
+
+    public void setReceiver(String receiver)
+    {
+        this.receiver = receiver;
     }
 }
