@@ -1,6 +1,7 @@
 INSERT INTO Users (FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, ROLE) VALUES
   ('Oxana', 'Name', 'oxana@gmail.com',  '$2a$10$eBV7al31hkDoFlro3r5CWuz.doYh4F4jgOqvWBgqoO9m48.CYrqZ6', 'USER'), -- pass: 123
-  ('Alex', 'Lastname', 'alex@gmail.com', '$2a$10$ctvShkfWDty01ssKCN60G.oIkOvtzOhiuxSN0OgosixBijy48vtOO', 'ADMIN');  -- 456
+  ('Alex', 'Lastname', 'alex@gmail.com', '$2a$10$ctvShkfWDty01ssKCN60G.oIkOvtzOhiuxSN0OgosixBijy48vtOO', 'ADMIN'),  -- 456
+  ('Jora', 'Cardan', 'jora.cardan@mail.md', '$2a$10$eBV7al31hkDoFlro3r5CWuz.doYh4F4jgOqvWBgqoO9m48.CYrqZ6','USER'); -- 123
 
 INSERT INTO Items (USER_ID, DATE_TIME, TITLE, DESCRIPTION) VALUES
   (1, '2018-10-16 22:30:00', 'Apple MacBook Pro 15.4-Inch Laptop', 'Macbook-ul de 12 inch este cel mai atractiv model de laptop Apple în materie de preţ. Memoria RAM de 8 GB, hard disk SSD de până la 512 GB, autonomia bateriei de 10 ore.'),
@@ -11,7 +12,8 @@ INSERT INTO Items (USER_ID, DATE_TIME, TITLE, DESCRIPTION) VALUES
   (2, '2018-10-20 09:34:00', '100 Cotton Work Jeans with Triple Seams', 'We are manufacturers of specialized industrial and commercial work wear, providing protection and comfort to workers in many industries with our heavy duty garments.'),
   (2, '2018-09-07 11:30:00', 'JBL Xtreme 2 Portable Bluetooth Waterproof Speaker', 'JBL Xtreme 2 is the ultimate portable Bluetooth speaker that effortlessly delivers dynamic and immersive stereo sound. The speaker is armed with four drivers.'),
   (2, '2018-03-14 07:12:00', '12V Cordless Drill Diver', 'The Prostormer 12V Lithium-Ion Cordless 3/8-inch Drill Driver is engineered for applications in drilling wood, metal, masonry, etc.'),
-  (2, '2018-06-16 10:01:00', 'Catan Expansion: Traders & Barbarians', 'Delve deep into Catan! In Catan: Traders & Barbarians youll find lots of cool new ways to explore Klaus Teubers award-winning game series. You can now play with just 2 players! Add a harbormaster, a friendly robber, or special events. ');
+  (2, '2018-06-16 10:01:00', 'Catan Expansion: Traders & Barbarians', 'Delve deep into Catan! In Catan: Traders & Barbarians youll find lots of cool new ways to explore Klaus Teubers award-winning game series. You can now play with just 2 players! Add a harbormaster, a friendly robber, or special events. '),
+  (3, '2018-11-08 10:14:00', 'Ferrari ca nou', 'Aproape nou, merge si pe drumurile moldovenesti, primii 10000000 moldoveni care se vor adresa, vor participa la extragere pe site RANDOM.ORG');
 
 
 INSERT INTO Images (NAME, IMAGE_DATA, ITEM_ID, THUMBNAIL) VALUES
@@ -63,7 +65,10 @@ INSERT INTO Images (NAME, IMAGE_DATA, ITEM_ID, THUMBNAIL) VALUES
   ('catan.jpg', FILE_READ('src/main/resources/images/catan.jpg'), 9, false),
   ('catan1.jpg', FILE_READ('src/main/resources/images/catan1.jpg'), 9, false),
   ('catan2.jpg', FILE_READ('src/main/resources/images/catan2.jpg'), 9, false),
-  ('catan4.jpg', FILE_READ('src/main/resources/images/catan4.jpg'), 9, false);
+  ('catan4.jpg', FILE_READ('src/main/resources/images/catan4.jpg'), 9, false),
+
+  ('enzo.jpg', FILE_READ('src/main/resources/images/enzo.jpg'), 10, true),
+  ('enzo.jpg', FILE_READ('src/main/resources/images/enzo.jpg'), 10, false);
 
 
 INSERT INTO Rating (RATING, ITEM_ID, USER_ID) VALUES
@@ -74,7 +79,7 @@ INSERT INTO Rating (RATING, ITEM_ID, USER_ID) VALUES
  (2.0, 5, 1), (4.0, 5, 2),
  (2.0, 6, 1), (1.0, 6, 2),
  (4.0, 7, 1), (4.0, 7, 2),
- (5.0, 9, 1), (5.0, 9, 2);
+ (5.0, 9, 1), (5.0, 9, 2), (5.0, 10, 3);
 
 
 INSERT INTO Comments (COMMENT, DATE_TIME, ITEM_ID, USER_ID) VALUES
