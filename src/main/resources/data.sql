@@ -1,5 +1,5 @@
 INSERT INTO Users (FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, ROLE) VALUES
-  ('Oxana', 'Name', 'oxana@gmail.com',  '$2a$10$eBV7al31hkDoFlro3r5CWuz.doYh4F4jgOqvWBgqoO9m48.CYrqZ6', 'USER'), -- pass: 123
+  ('Oxana', 'Name', 'oxana.dunav@gmail.com',  '$2a$10$eBV7al31hkDoFlro3r5CWuz.doYh4F4jgOqvWBgqoO9m48.CYrqZ6', 'USER'), -- pass: 123
   ('Alex', 'Lastname', 'alex@gmail.com', '$2a$10$ctvShkfWDty01ssKCN60G.oIkOvtzOhiuxSN0OgosixBijy48vtOO', 'ADMIN'),  -- 456
   ('Jora', 'Cardan', 'jora.cardan@mail.md', '$2a$10$eBV7al31hkDoFlro3r5CWuz.doYh4F4jgOqvWBgqoO9m48.CYrqZ6','USER'); -- 123
 
@@ -13,7 +13,7 @@ INSERT INTO Items (USER_ID, DATE_TIME, TITLE, DESCRIPTION) VALUES
   (2, '2018-09-07 11:30:00', 'JBL Xtreme 2 Portable Bluetooth Waterproof Speaker', 'JBL Xtreme 2 is the ultimate portable Bluetooth speaker that effortlessly delivers dynamic and immersive stereo sound. The speaker is armed with four drivers.'),
   (2, '2018-03-14 07:12:00', '12V Cordless Drill Diver', 'The Prostormer 12V Lithium-Ion Cordless 3/8-inch Drill Driver is engineered for applications in drilling wood, metal, masonry, etc.'),
   (2, '2018-06-16 10:01:00', 'Catan Expansion: Traders & Barbarians', 'Delve deep into Catan! In Catan: Traders & Barbarians youll find lots of cool new ways to explore Klaus Teubers award-winning game series. You can now play with just 2 players! Add a harbormaster, a friendly robber, or special events. '),
-  (3, '2018-11-08 10:14:00', 'Ferrari ca nou', 'Aproape nou, merge si pe drumurile moldovenesti, primii 10000000 moldoveni care se vor adresa, vor participa la extragere pe site RANDOM.ORG');
+  (3, '2018-11-08 10:14:00', 'Atentie!!11 Ferrari ca nou! Degeaba!', 'Aproape nou, merge si pe drumurile moldovenesti, primii 10000000 moldoveni care se vor adresa, vor participa la extragere pe site RANDOM.ORG');
 
 
 INSERT INTO Images (NAME, IMAGE_DATA, ITEM_ID, THUMBNAIL) VALUES
